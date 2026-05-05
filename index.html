@@ -739,7 +739,7 @@ canvas { max-width: 100%; }
     <button class="pin-btn" onclick="pinPress('0')">0</button>
     <button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
-  <p style="font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:1px">DEFAULT PIN: 1234</p>
+  <p style="font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:1px">DEFAULT PIN: 8007</p>
 </div>
 
 <!-- TOP BAR -->
@@ -1165,7 +1165,7 @@ const DB = {
   contractorEntries(){ return this.get('entries')||[] },
   categories(){ return this.get('cats')||['Metal Polisher','Metal Caster'] },
   calcHistory(){ return this.get('calc')||[] },
-  pin(){ return this.get('pin')||'1234' },
+  pin(){ return this.get('pin')||'8007' },
   setPin(p){ this.set('pin',p) },
   saveItems(d){ this.set('items',d) },
   saveEntries(d){ this.set('entries',d) },
