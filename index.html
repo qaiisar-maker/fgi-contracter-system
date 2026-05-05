@@ -1876,6 +1876,10 @@ function confirmDate(){
 //  ON LOAD
 // ============================================================
 window.onload=function(){
+  // Skip password - direct entry
+  document.getElementById('lockScreen').style.display='none';
+  initApp();
+  return;
   // Render cal history
   renderCalcHistory();
   updateItemDataLists();
