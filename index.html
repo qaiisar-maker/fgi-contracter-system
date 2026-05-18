@@ -4,718 +4,213 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>FGI Contractor</title>
-<meta name="description" content="FGI Contractor Management System">
 <meta name="theme-color" content="#0d2b6b">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="FGI Contractor">
 <link rel="manifest" href="manifest.json">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-touch-fullscreen" content="yes">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap');
-
-:root {
-  --navy: #0d2b6b;
-  --blue: #1a47a8;
-  --teal: #007a8c;
-  --gold: #e6a817;
-  --light: #e8f0ff;
-  --white: #ffffff;
-  --bg: #f0f4ff;
-  --card: #ffffff;
-  --text: #0d2b6b;
-  --sub: #5a6e99;
-  --border: #c5d3f0;
-  --red: #d63031;
-  --green: #00b894;
-  --shadow: 0 4px 20px rgba(13,43,107,0.13);
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Nunito', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* === LOCK SCREEN === */
-#lockScreen {
-  position: fixed; inset: 0;
-  background: linear-gradient(160deg, #071a45 0%, #0d2b6b 40%, #0e4a7a 75%, #006878 100%);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  z-index: 9999;
-  gap: 20px;
-  overflow: hidden;
-}
-
-#lockScreen::before {
-  content: '';
-  position: absolute;
-  width: 320px; height: 320px;
-  background: radial-gradient(circle, rgba(230,168,23,0.08) 0%, transparent 70%);
-  top: 50%; left: 50%; transform: translate(-50%,-60%);
-  pointer-events: none;
-}
-
-.lock-logo {
-  width: 110px; height: 110px;
-  background: white;
-  border-radius: 26px;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 0 6px rgba(255,255,255,0.12), 0 12px 40px rgba(0,0,0,0.45);
-  position: relative;
-}
-
-.lock-logo::after {
-  content: '';
-  position: absolute; inset: -6px;
-  border-radius: 32px;
-  border: 2px solid rgba(230,168,23,0.4);
-  pointer-events: none;
-}
-
-.lock-logo svg { width: 84px; height: 58px; }
-
-#lockScreen h1 {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 30px; font-weight: 700;
-  color: white; letter-spacing: 6px;
-  text-align: center;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
-}
-
-#lockScreen .lock-sub {
-  color: rgba(255,255,255,0.5);
-  font-size: 11px; letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-top: -14px;
-}
-
-.lock-divider {
-  width: 40px; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  border-radius: 2px;
-}
-
-.pin-dots {
-  display: flex; gap: 16px; margin: 8px 0;
-}
-
-.pin-dot {
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.5);
-  background: transparent;
-  transition: all 0.2s;
-}
-
-.pin-dot.filled { background: var(--gold); border-color: var(--gold); }
-
-.pin-pad {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 12px; width: 240px;
-}
-
-.pin-btn {
-  height: 62px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 14px;
-  color: white;
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 24px; font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s;
-  display: flex; align-items: center; justify-content: center;
-}
-
-.pin-btn:active { background: rgba(255,255,255,0.25); transform: scale(0.95); }
-.pin-btn.del { font-size: 18px; }
-.pin-btn.ok { background: var(--gold); border-color: var(--gold); color: var(--navy); }
-
-.pin-error { color: #ff6b6b; font-size: 13px; min-height: 18px; text-align: center; }
-
-/* === TOP BAR === */
-.topbar {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
-  padding: 14px 16px 12px;
-  display: flex; align-items: center; justify-content: space-between;
-  box-shadow: 0 3px 12px rgba(13,43,107,0.25);
-  position: sticky; top: 0; z-index: 100;
-}
-
-.topbar-logo { display: flex; align-items: center; gap: 10px; }
-
-.topbar-logo-icon {
-  width: 40px; height: 40px;
-  background: white;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-}
-
-.topbar-logo-icon svg { width: 32px; height: 22px; }
-
-.topbar-title {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 20px; font-weight: 700;
-  color: white; letter-spacing: 2px;
-  line-height: 1;
-}
-
-.topbar-sub {
-  font-size: 10px; color: rgba(255,255,255,0.65);
-  letter-spacing: 1px;
-}
-
-.topbar-right { display: flex; gap: 8px; }
-
-.icon-btn {
-  width: 38px; height: 38px;
-  background: rgba(255,255,255,0.12);
-  border: none; border-radius: 10px;
-  color: white; font-size: 18px;
-  cursor: pointer; display: flex;
-  align-items: center; justify-content: center;
-  transition: background 0.2s;
-}
-.icon-btn:active { background: rgba(255,255,255,0.25); }
-
-/* === NAV === */
-.nav {
-  display: flex;
-  background: var(--card);
-  border-bottom: 2px solid var(--border);
-  overflow-x: auto;
-  scrollbar-width: none;
-  position: sticky; top: 64px; z-index: 99;
-}
-
-.nav::-webkit-scrollbar { display: none; }
-
-.nav-btn {
-  flex: 0 0 auto;
-  padding: 12px 16px;
-  border: none; background: none;
-  font-family: 'Nunito', sans-serif;
-  font-size: 12px; font-weight: 700;
-  color: var(--sub);
-  cursor: pointer;
-  white-space: nowrap;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
-  transition: all 0.2s;
-  display: flex; align-items: center; gap: 5px;
-}
-
-.nav-btn.active {
-  color: var(--navy);
-  border-bottom-color: var(--gold);
-}
-
-/* === PAGES === */
-.page { display: none; padding: 16px; }
-.page.active { display: block; }
-
-/* === CARDS === */
-.card {
-  background: var(--card);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  padding: 18px;
-  margin-bottom: 16px;
-}
-
-.card-title {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 17px; font-weight: 700;
-  color: var(--navy);
-  margin-bottom: 14px;
-  display: flex; align-items: center; gap: 8px;
-}
-
-.badge {
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.badge-gold { background: #fff3cd; color: #856404; }
-.badge-teal { background: #d1f0f4; color: #007a8c; }
-.badge-blue { background: #dbeafe; color: #1a47a8; }
-
-/* === FORM === */
-.form-group { margin-bottom: 12px; }
-
-label {
-  display: block;
-  font-size: 11px; font-weight: 700;
-  color: var(--sub);
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  margin-bottom: 5px;
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 11px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  background: var(--bg);
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-input:focus, select:focus, textarea:focus {
-  border-color: var(--blue);
-  background: white;
-}
-
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-
-/* === BUTTONS === */
-.btn {
-  padding: 12px 20px;
-  border: none; border-radius: 10px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px; font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex; align-items: center; justify-content: center;
-  gap: 6px;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--navy), var(--blue));
-  color: white;
-  box-shadow: 0 4px 14px rgba(13,43,107,0.3);
-  width: 100%;
-}
-
-.btn-primary:active { transform: scale(0.98); }
-
-.btn-gold {
-  background: linear-gradient(135deg, var(--gold), #c8960f);
-  color: var(--navy);
-  width: 100%;
-}
-
-.btn-sm {
-  padding: 7px 12px;
-  font-size: 12px;
-  border-radius: 8px;
-}
-
-.btn-teal {
-  background: linear-gradient(135deg, var(--teal), #005f6e);
-  color: white;
-}
-
-.btn-red {
-  background: var(--red);
-  color: white;
-}
-
-.btn-green {
-  background: var(--green);
-  color: white;
-}
-
-/* === TABLE === */
-.tbl-wrap { overflow-x: auto; border-radius: 12px; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  min-width: 500px;
-}
-
-th {
-  background: linear-gradient(135deg, var(--navy), var(--blue));
-  color: white;
-  padding: 10px 10px;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-td {
-  padding: 9px 10px;
-  border-bottom: 1px solid var(--border);
-  text-align: center;
-  color: var(--text);
-}
-
-tr:last-child td { border-bottom: none; }
-tr:nth-child(even) td { background: #f5f8ff; }
-
-.tbl-actions { display: flex; gap: 5px; justify-content: center; }
-
-/* === CALCULATOR === */
-.calc-display {
-  background: var(--navy);
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 12px;
-  text-align: right;
-}
-
-.calc-expr {
-  font-size: 12px; color: rgba(255,255,255,0.5);
-  min-height: 18px; word-break: break-all;
-}
-
-.calc-result {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 36px; font-weight: 700;
-  color: var(--gold);
-  word-break: break-all;
-}
-
-.calc-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.calc-key {
-  padding: 16px 8px;
-  border: none; border-radius: 10px;
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 20px; font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.calc-key:active { transform: scale(0.93); }
-.k-num { background: #e8f0ff; color: var(--navy); }
-.k-op { background: var(--blue); color: white; }
-.k-eq { background: var(--gold); color: var(--navy); }
-.k-clr { background: var(--red); color: white; }
-.k-bk { background: var(--sub); color: white; }
-
-.hist-list { max-height: 160px; overflow-y: auto; }
-.hist-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 7px 10px;
-  border-bottom: 1px solid var(--border);
-  font-size: 13px;
-}
-.hist-item:last-child { border-bottom: none; }
-.hist-item input[type=checkbox] { margin-right: 8px; }
-
-.hist-sum {
-  margin-top: 10px;
-  background: var(--navy);
-  color: var(--gold);
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 18px; font-weight: 700;
-  text-align: center;
-}
-
-/* === DATE PICKER === */
-.date-picker-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.55);
-  display: flex; align-items: flex-end; justify-content: center;
-  z-index: 2000;
-  padding-bottom: 0;
-}
-
-.date-picker-sheet {
-  background: white;
-  border-radius: 22px 22px 0 0;
-  padding: 20px 20px 32px;
-  width: 100%; max-width: 440px;
-  box-shadow: 0 -8px 40px rgba(0,0,0,0.2);
-  animation: slideUp 0.25s ease;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
-.dp-title {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 17px; font-weight: 700;
-  color: var(--navy);
-  margin-bottom: 16px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-
-.dp-grid {
-  display: grid; grid-template-columns: repeat(7, 1fr);
-  gap: 6px; margin-bottom: 12px;
-}
-
-.dp-day-name {
-  text-align: center; font-size: 10px;
-  font-weight: 700; color: var(--sub);
-  padding: 4px 0;
-}
-
-.dp-cell {
-  text-align: center;
-  padding: 10px 4px;
-  border-radius: 10px;
-  font-size: 14px; font-weight: 600;
-  cursor: pointer;
-  color: var(--text);
-  transition: all 0.15s;
-  border: none; background: transparent;
-}
-
-.dp-cell:hover { background: var(--light); }
-.dp-cell.today { color: var(--teal); font-weight: 800; }
-.dp-cell.selected { background: var(--navy); color: white; }
-.dp-cell.empty { cursor: default; }
-
-.dp-nav {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 14px;
-}
-
-.dp-nav-btn {
-  background: var(--light); border: none; border-radius: 8px;
-  padding: 7px 14px; font-size: 16px;
-  color: var(--navy); cursor: pointer; font-weight: 700;
-}
-
-.dp-month-label {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 18px; font-weight: 700; color: var(--navy);
-}
-
-.date-input-btn {
-  width: 100%;
-  padding: 11px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  background: var(--bg);
-  cursor: pointer;
-  text-align: left;
-  display: flex; align-items: center; justify-content: space-between;
-  transition: border-color 0.2s;
-}
-
-.date-input-btn:focus, .date-input-btn:hover { border-color: var(--blue); background: white; }
-
-/* === REPORT IMAGE === */
-#reportCanvas { display: none; }
-
-/* === MODAL === */
-.modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 1000;
-  padding: 16px;
-}
-
-.modal {
-  background: white;
-  border-radius: 18px;
-  padding: 20px;
-  width: 100%; max-width: 380px;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-
-.modal-title {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 18px; font-weight: 700;
-  color: var(--navy); margin-bottom: 16px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-
-.close-btn {
-  background: var(--border);
-  border: none; border-radius: 8px;
-  width: 28px; height: 28px;
-  font-size: 14px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-}
-
-/* === TOAST === */
-.toast {
-  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-  background: var(--navy); color: white;
-  padding: 10px 20px; border-radius: 20px;
-  font-size: 13px; font-weight: 600;
-  z-index: 9000; opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none; white-space: nowrap;
-}
-.toast.show { opacity: 1; }
-
-/* === DASHBOARD STATS === */
-.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-
-.stat-card {
-  background: white;
-  border-radius: 14px;
-  padding: 14px;
-  box-shadow: var(--shadow);
-  text-align: center;
-  border-left: 4px solid var(--blue);
-}
-
-.stat-card.gold { border-left-color: var(--gold); }
-.stat-card.teal { border-left-color: var(--teal); }
-.stat-card.red { border-left-color: var(--red); }
-
-.stat-num {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 26px; font-weight: 700;
-  color: var(--navy);
-}
-
-.stat-lbl { font-size: 11px; color: var(--sub); font-weight: 700; letter-spacing: 0.5px; }
-
-/* === SECTION TITLE === */
-.section-title {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 15px; font-weight: 700;
-  color: var(--sub);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  padding-left: 4px;
-}
-
-/* === CATEGORY SELECT === */
-.cat-pills { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
-
-.cat-pill {
-  padding: 6px 13px;
-  border-radius: 20px;
-  border: 1.5px solid var(--border);
-  background: var(--bg);
-  font-size: 12px; font-weight: 700;
-  color: var(--sub);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.cat-pill.selected {
-  background: var(--navy);
-  color: white;
-  border-color: var(--navy);
-}
-
-.add-cat-btn {
-  padding: 6px 13px;
-  border-radius: 20px;
-  border: 1.5px dashed var(--blue);
-  background: transparent;
-  font-size: 12px; font-weight: 700;
-  color: var(--blue);
-  cursor: pointer;
-}
-
-/* EMPTY STATE */
-.empty {
-  text-align: center;
-  padding: 30px;
-  color: var(--sub);
-  font-size: 13px;
-}
-.empty-icon { font-size: 40px; margin-bottom: 8px; }
-
-/* AMOUNT INPUT HIGHLIGHT */
-.amount-box {
-  background: #fff3cd;
-  border: 1.5px solid var(--gold) !important;
-  font-weight: 700;
-  color: var(--navy);
-}
-
-/* REPORT CARD */
-.report-header {
-  background: linear-gradient(135deg, var(--navy), var(--blue));
-  border-radius: 14px;
-  padding: 16px;
-  color: white;
-  margin-bottom: 14px;
-}
-
-.report-header h2 {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 22px; font-weight: 700;
-  letter-spacing: 2px;
-}
-
-.report-header p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
-
-.grand-total {
-  background: var(--gold);
-  border-radius: 12px;
-  padding: 14px;
-  text-align: center;
-  margin-top: 12px;
-}
-
-.grand-total .lbl { font-size: 11px; font-weight: 700; color: var(--navy); letter-spacing: 1px; }
-.grand-total .val {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 28px; font-weight: 700;
-  color: var(--navy);
-}
-
-.date-group-title {
-  background: var(--light);
-  border-left: 4px solid var(--teal);
-  padding: 7px 12px;
-  font-size: 12px; font-weight: 700;
-  color: var(--teal);
-  margin: 8px 0;
-  border-radius: 0 8px 8px 0;
-  display: flex; justify-content: space-between;
-}
-
-canvas { max-width: 100%; }
-
+:root{--navy:#0d2b6b;--blue:#1a47a8;--teal:#007a8c;--gold:#e6a817;--light:#e8f0ff;--white:#ffffff;--bg:#f0f4ff;--card:#ffffff;--text:#0d2b6b;--sub:#5a6e99;--border:#c5d3f0;--red:#d63031;--green:#00b894;--shadow:0 4px 20px rgba(13,43,107,0.13)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* OFFLINE BAR */
+#offlineBar{display:none;position:fixed;top:0;left:0;right:0;z-index:10000;background:#c0392b;color:#fff;text-align:center;padding:6px;font-size:11px;font-weight:700;letter-spacing:1px}
+
+/* FOLDER PICKER */
+#fpModal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9995;display:none;align-items:center;justify-content:center;padding:20px}
+#fpBox{background:#fff;border-radius:18px;padding:22px;width:100%;max-width:310px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+.fp-title{color:#0d2b6b;font-size:16px;font-weight:700;margin-bottom:4px;font-family:'Rajdhani',sans-serif}
+.fp-sub{font-size:11px;color:#666;margin-bottom:14px}
+.fp-row-btn{width:100%;padding:13px;border:none;border-radius:9px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:7px}
+.fp-cancel{width:100%;padding:9px;border:1.5px solid #ddd;border-radius:9px;font-family:'Nunito',sans-serif;font-size:12px;cursor:pointer;background:none;color:#666}
+
+/* LOCK SCREEN */
+#lockScreen{position:fixed;inset:0;background:linear-gradient(160deg,#071a45 0%,#0d2b6b 40%,#0e4a7a 75%,#006878 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:16px;overflow-y:auto}
+.lock-logo{width:100px;height:100px;background:white;border-radius:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px rgba(255,255,255,0.12),0 12px 40px rgba(0,0,0,0.45)}
+.lock-logo svg{width:76px;height:52px}
+#lockScreen h1{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:white;letter-spacing:5px;text-align:center}
+.lock-sub{color:rgba(255,255,255,0.5);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-top:-12px}
+.lock-divider{width:40px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);border-radius:2px}
+.pin-dots{display:flex;gap:16px;margin:6px 0}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.5);background:transparent;transition:all 0.2s}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:240px}
+.pin-btn{height:62px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:14px;color:white;font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center}
+.pin-btn:active{background:rgba(255,255,255,0.25);transform:scale(0.95)}
+.pin-btn.del{font-size:18px}
+.pin-error{color:#ff6b6b;font-size:13px;min-height:18px;text-align:center}
+.pin-links{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:4px}
+.pin-link-btn{color:rgba(255,255,255,0.6);font-size:11px;text-decoration:underline;cursor:pointer;letter-spacing:1px}
+
+/* FORGOT PIN */
+#forgotPinSection{display:none;text-align:center;padding:10px;max-width:260px;width:100%}
+.fp-q-display{background:rgba(230,168,23,0.15);border-radius:10px;padding:10px;color:#e6a817;font-size:12px;font-weight:700;margin-bottom:10px;line-height:1.5}
+#forgotPinSection input{width:100%;padding:10px 12px;border:1.5px solid rgba(255,255,255,0.3);border-radius:9px;font-family:'Nunito',sans-serif;font-size:13px;color:#111;background:rgba(255,255,255,0.9);margin-bottom:7px;outline:none}
+.fp-verify-btn{background:#e6a817;color:#0d2b6b;border:none;border-radius:9px;padding:11px;width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.fp-back-link{color:rgba(255,255,255,0.5);font-size:11px;cursor:pointer;margin-top:7px;display:block;text-decoration:underline}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 3px 12px rgba(13,43,107,0.25);position:sticky;top:0;z-index:100}
+.topbar-logo{display:flex;align-items:center;gap:10px}
+.topbar-logo-icon{width:40px;height:40px;background:white;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.topbar-logo-icon svg{width:32px;height:22px}
+.topbar-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:white;letter-spacing:2px;line-height:1}
+.topbar-sub{font-size:10px;color:rgba(255,255,255,0.65);letter-spacing:1px}
+.topbar-right{display:flex;gap:8px}
+.icon-btn{width:38px;height:38px;background:rgba(255,255,255,0.12);border:none;border-radius:10px;color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s}
+.icon-btn:active{background:rgba(255,255,255,0.25)}
+
+/* NAV */
+.nav{display:flex;background:var(--card);border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none;position:sticky;top:64px;z-index:99}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{flex:0 0 auto;padding:12px 16px;border:none;background:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all 0.2s;display:flex;align-items:center;gap:5px}
+.nav-btn.active{color:var(--navy);border-bottom-color:var(--gold)}
+
+/* PAGES */
+.page{display:none;padding:16px}
+.page.active{display:block}
+
+/* CARDS */
+.card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+.card-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.badge{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.5px}
+.badge-gold{background:#fff3cd;color:#856404}
+.badge-teal{background:#d1f0f4;color:#007a8c}
+
+/* FORM */
+.form-group{margin-bottom:12px}
+label{display:block;font-size:11px;font-weight:700;color:var(--sub);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:5px}
+input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color 0.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);background:white}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* BUTTONS */
+.btn{padding:12px 20px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:linear-gradient(135deg,var(--navy),var(--blue));color:white;box-shadow:0 4px 14px rgba(13,43,107,0.3);width:100%}
+.btn-primary:active{transform:scale(0.98)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#c8960f);color:var(--navy);width:100%}
+.btn-sm{padding:7px 12px;font-size:12px;border-radius:8px}
+.btn-teal{background:linear-gradient(135deg,var(--teal),#005f6e);color:white}
+.btn-red{background:var(--red);color:white}
+.btn-green{background:var(--green);color:white}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:500px}
+th{background:linear-gradient(135deg,var(--navy),var(--blue));color:white;padding:10px;text-align:center;font-size:11px;font-weight:700;letter-spacing:0.5px;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--border);text-align:center;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#f5f8ff}
+.tbl-actions{display:flex;gap:5px;justify-content:center}
+
+/* CALCULATOR */
+.calc-display{background:var(--navy);border-radius:14px;padding:16px;margin-bottom:12px;text-align:right}
+.calc-expr{font-size:12px;color:rgba(255,255,255,0.5);min-height:18px;word-break:break-all}
+.calc-result{font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--gold);word-break:break-all}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.calc-key{padding:16px 8px;border:none;border-radius:10px;font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;cursor:pointer;transition:all 0.15s}
+.calc-key:active{transform:scale(0.93)}
+.k-num{background:#e8f0ff;color:var(--navy)}
+.k-op{background:var(--blue);color:white}
+.k-eq{background:var(--gold);color:var(--navy)}
+.k-clr{background:var(--red);color:white}
+.k-bk{background:var(--sub);color:white}
+.hist-list{max-height:160px;overflow-y:auto}
+.hist-item{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-bottom:1px solid var(--border);font-size:13px}
+.hist-item:last-child{border-bottom:none}
+.hist-sum{margin-top:10px;background:var(--navy);color:var(--gold);border-radius:10px;padding:10px 14px;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;text-align:center}
+
+/* DATE PICKER */
+.date-picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;justify-content:center;z-index:2000}
+.date-picker-sheet{background:white;border-radius:22px 22px 0 0;padding:20px 20px 32px;width:100%;max-width:440px;box-shadow:0 -8px 40px rgba(0,0,0,0.2);animation:slideUp 0.25s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.dp-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:12px}
+.dp-day-name{text-align:center;font-size:10px;font-weight:700;color:var(--sub);padding:4px 0}
+.dp-cell{text-align:center;padding:10px 4px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;color:var(--text);transition:all 0.15s;border:none;background:transparent}
+.dp-cell:hover{background:var(--light)}
+.dp-cell.today{color:var(--teal);font-weight:800}
+.dp-cell.selected{background:var(--navy);color:white}
+.dp-cell.empty{cursor:default}
+.dp-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.dp-nav-btn{background:var(--light);border:none;border-radius:8px;padding:7px 14px;font-size:16px;color:var(--navy);cursor:pointer;font-weight:700}
+.dp-month-label{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--navy)}
+.date-input-btn{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);background:var(--bg);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:border-color 0.2s}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+.modal{background:white;border-radius:18px;padding:20px;width:100%;max-width:380px;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.modal-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.close-btn{background:var(--border);border:none;border-radius:8px;width:28px;height:28px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:9000;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* DASHBOARD STATS */
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.stat-card{background:white;border-radius:14px;padding:14px;box-shadow:var(--shadow);text-align:center;border-left:4px solid var(--blue)}
+.stat-card.gold{border-left-color:var(--gold)}
+.stat-card.teal{border-left-color:var(--teal)}
+.stat-card.red{border-left-color:var(--red)}
+.stat-num{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--navy)}
+.stat-lbl{font-size:11px;color:var(--sub);font-weight:700;letter-spacing:0.5px}
+
+/* CATEGORY */
+.cat-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+.cat-pill{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;transition:all 0.2s}
+.cat-pill.selected{background:var(--navy);color:white;border-color:var(--navy)}
+.add-cat-btn{padding:6px 13px;border-radius:20px;border:1.5px dashed var(--blue);background:transparent;font-size:12px;font-weight:700;color:var(--blue);cursor:pointer}
+
+/* EMPTY */
+.empty{text-align:center;padding:30px;color:var(--sub);font-size:13px}
+.empty-icon{font-size:40px;margin-bottom:8px}
+.amount-box{background:#fff3cd;border:1.5px solid var(--gold)!important;font-weight:700;color:var(--navy)}
+
+/* REPORT */
+.report-header{background:linear-gradient(135deg,var(--navy),var(--blue));border-radius:14px;padding:16px;color:white;margin-bottom:14px}
+.report-header h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;letter-spacing:2px}
+.report-header p{font-size:12px;opacity:0.7;margin-top:2px}
+.grand-total{background:var(--gold);border-radius:12px;padding:14px;text-align:center;margin-top:12px}
+.grand-total .lbl{font-size:11px;font-weight:700;color:var(--navy);letter-spacing:1px}
+.grand-total .val{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--navy)}
+.date-group-title{background:var(--light);border-left:4px solid var(--teal);padding:7px 12px;font-size:12px;font-weight:700;color:var(--teal);margin:8px 0;border-radius:0 8px 8px 0;display:flex;justify-content:space-between}
+
+/* SQ SETTINGS */
+#sqSettingsForm{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
 </style>
 </head>
 <body>
+
+<div id="offlineBar">📵 OFFLINE MODE — Data safe hai</div>
+
+<!-- FOLDER PICKER -->
+<div id="fpModal">
+  <div id="fpBox">
+    <div class="fp-title" id="fpModalTitle">📁 Kahan Save Karein?</div>
+    <div class="fp-sub" id="fpModalSub">File save karne ki jagah chunein</div>
+    <button class="fp-row-btn" style="background:#1a47a8;color:white;" onclick="folderPickerAction('dl')">📥 Downloads Folder</button>
+    <button class="fp-row-btn" style="background:#007a8c;color:white;" onclick="folderPickerAction('sh')">📤 Share / WhatsApp</button>
+    <button class="fp-cancel" onclick="closeFolderPicker()">Baad mein</button>
+  </div>
+</div>
 
 <!-- LOCK SCREEN -->
 <div id="lockScreen">
   <div class="lock-logo">
     <svg viewBox="0 0 90 62" xmlns="http://www.w3.org/2000/svg">
-      <!-- F -->
       <rect x="4" y="6" width="9" height="50" rx="2" fill="#0d2b6b"/>
       <rect x="4" y="6" width="26" height="9" rx="2" fill="#0d2b6b"/>
       <rect x="4" y="26" width="20" height="8" rx="2" fill="#0d2b6b"/>
-      <!-- G -->
       <path d="M38 31 L54 31 L54 52 Q46 58 38 52 Q30 46 30 31 Q30 14 38 8 Q46 2 54 8 L54 16" stroke="#0d2b6b" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <!-- i -->
       <rect x="63" y="20" width="8" height="36" rx="4" fill="#0d2b6b"/>
       <rect x="63" y="8" width="8" height="8" rx="4" fill="#e6a817"/>
     </svg>
   </div>
   <div style="text-align:center">
     <h1>FGI CONTRACTOR</h1>
-    <div class="lock-divider" style="margin:10px auto 6px"></div>
+    <div class="lock-divider" style="margin:10px auto 6px;width:40px;height:2px;background:linear-gradient(90deg,transparent,#e6a817,transparent);border-radius:2px;"></div>
     <div class="lock-sub">MANAGEMENT SYSTEM</div>
   </div>
   <div class="pin-dots" id="pinDots">
@@ -739,7 +234,18 @@ canvas { max-width: 100%; }
     <button class="pin-btn" onclick="pinPress('0')">0</button>
     <button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
+  <div class="pin-links">
+    <span class="pin-link-btn" onclick="showForgotPin()">🔓 PIN Bhool Gaye?</span>
+  </div>
   <p style="font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:1px">DEFAULT PIN: 8007</p>
+  <!-- FORGOT PIN -->
+  <div id="forgotPinSection">
+    <div class="fp-q-display" id="fpQuestion">Loading...</div>
+    <input type="text" id="fpAnswer" placeholder="Jawab likhein..." autocomplete="off">
+    <button class="fp-verify-btn" onclick="verifyForgotPin()">✅ Verify Karein</button>
+    <div id="fpError" style="color:#ff6b6b;font-size:11px;min-height:14px;margin-top:5px;"></div>
+    <span class="fp-back-link" onclick="hideForgotPin()">← Wapas PIN Screen</span>
+  </div>
 </div>
 
 <!-- TOP BAR -->
@@ -775,39 +281,22 @@ canvas { max-width: 100%; }
   <button class="nav-btn" onclick="goPage('calcPage',this)">🔢 Calculator</button>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- ==================== DASHBOARD PAGE ==================== -->
+<!-- DASHBOARD -->
 <div class="page active" id="dashPage">
   <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-num" id="statItems">0</div>
-      <div class="stat-lbl">Contract Items</div>
-    </div>
-    <div class="stat-card gold">
-      <div class="stat-num" id="statContractors">0</div>
-      <div class="stat-lbl">Contractors</div>
-    </div>
-    <div class="stat-card teal">
-      <div class="stat-num" id="statEntries">0</div>
-      <div class="stat-lbl">Total Entries</div>
-    </div>
-    <div class="stat-card red">
-      <div class="stat-num" id="statAmount">0</div>
-      <div class="stat-lbl">Total Amount</div>
-    </div>
+    <div class="stat-card"><div class="stat-num" id="statItems">0</div><div class="stat-lbl">Contract Items</div></div>
+    <div class="stat-card gold"><div class="stat-num" id="statContractors">0</div><div class="stat-lbl">Contractors</div></div>
+    <div class="stat-card teal"><div class="stat-num" id="statEntries">0</div><div class="stat-lbl">Total Entries</div></div>
+    <div class="stat-card red"><div class="stat-num" id="statAmount">0</div><div class="stat-lbl">Total Amount</div></div>
   </div>
-
   <div class="card">
     <div class="card-title">📋 Recent Contractor Entries</div>
-    <div id="dashRecent">
-      <div class="empty"><div class="empty-icon">📭</div>No entries yet</div>
-    </div>
+    <div id="dashRecent"><div class="empty"><div class="empty-icon">📭</div>No entries yet</div></div>
   </div>
-
   <div class="card">
-    <div class="card-title">📦 Quick Add Item</div>
+    <div class="card-title">📦 Quick Add</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <button class="btn btn-primary" onclick="goPage('addItemPage',document.querySelectorAll('.nav-btn')[1])">Add Contract Item</button>
       <button class="btn btn-gold" onclick="goPage('contractorPage',document.querySelectorAll('.nav-btn')[2])">Add Entry</button>
@@ -815,65 +304,35 @@ canvas { max-width: 100%; }
   </div>
 </div>
 
-<!-- ==================== ADD ITEM PAGE ==================== -->
+<!-- ADD ITEM PAGE -->
 <div class="page" id="addItemPage">
   <div class="card">
     <div class="card-title">➕ Add Contract Item <span class="badge badge-gold">Theekha</span></div>
-
     <div class="form-group">
       <label>Date (DD/MM/YY)</label>
       <button class="date-input-btn" id="ai_dateBtn" onclick="openDatePicker('ai')">
-        <span id="ai_dateDisplay">02/05/26</span>
-        <span style="font-size:16px">📅</span>
+        <span id="ai_dateDisplay">02/05/26</span><span style="font-size:16px">📅</span>
       </button>
       <input type="hidden" id="ai_date">
     </div>
-
     <div class="row2">
-      <div class="form-group">
-        <label>Item Code <span style="color:var(--teal);font-weight:400;font-size:10px">(Optional)</span></label>
-        <input type="text" id="ai_code" placeholder="e.g. MP001">
-      </div>
-      <div class="form-group">
-        <label>Qty</label>
-        <input type="number" id="ai_qty" placeholder="0">
-      </div>
+      <div class="form-group"><label>Item Code <span style="color:var(--teal);font-weight:400;font-size:10px">(Optional)</span></label><input type="text" id="ai_code" placeholder="e.g. MP001"></div>
+      <div class="form-group"><label>Qty</label><input type="number" id="ai_qty" placeholder="0"></div>
     </div>
-
-    <div class="form-group">
-      <label>Item Description</label>
-      <input type="text" id="ai_desc" placeholder="Item description...">
-    </div>
-
-    <div class="form-group">
-      <label>Rate (PKR)</label>
-      <input type="number" id="ai_rate" placeholder="0.00">
-    </div>
-
+    <div class="form-group"><label>Item Description</label><input type="text" id="ai_desc" placeholder="Item description..."></div>
+    <div class="form-group"><label>Rate (PKR)</label><input type="number" id="ai_rate" placeholder="0.00"></div>
     <div class="form-group">
       <label>Category</label>
       <div class="cat-pills" id="ai_catPills"></div>
       <button class="add-cat-btn" onclick="addCategoryPrompt()" style="margin-top:7px">+ Add New Category</button>
     </div>
-
     <button class="btn btn-primary" onclick="saveContractItem()" style="margin-top:8px">💾 SAVE ITEM</button>
   </div>
-
   <div class="card">
     <div class="card-title">📦 Contract Item Rate List</div>
     <div class="tbl-wrap">
       <table id="itemsTable">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Code</th>
-            <th>Description</th>
-            <th>Qty</th>
-            <th>Rate</th>
-            <th>Category</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Date</th><th>Code</th><th>Description</th><th>Qty</th><th>Rate</th><th>Category</th><th>Action</th></tr></thead>
         <tbody id="itemsTbody"></tbody>
       </table>
     </div>
@@ -882,78 +341,35 @@ canvas { max-width: 100%; }
   </div>
 </div>
 
-<!-- ==================== CONTRACTOR PAGE ==================== -->
+<!-- CONTRACTOR PAGE -->
 <div class="page" id="contractorPage">
   <div class="card">
     <div class="card-title">👷 Add Contractor Entry <span class="badge badge-teal">Theekhedar</span></div>
-
-    <div class="form-group">
-      <label>Category Filter</label>
-      <div class="cat-pills" id="ce_catPills"></div>
-    </div>
-
+    <div class="form-group"><label>Category Filter</label><div class="cat-pills" id="ce_catPills"></div></div>
     <div class="form-group">
       <label>Date (DD/MM/YY)</label>
       <button class="date-input-btn" id="ce_dateBtn" onclick="openDatePicker('ce')">
-        <span id="ce_dateDisplay">02/05/26</span>
-        <span style="font-size:16px">📅</span>
+        <span id="ce_dateDisplay">02/05/26</span><span style="font-size:16px">📅</span>
       </button>
       <input type="hidden" id="ce_date">
     </div>
-
-    <div class="form-group">
-      <label>Contractor Name (Theekhedar)</label>
-      <input type="text" id="ce_name" placeholder="Contractor name..." list="contractorList">
-      <datalist id="contractorList"></datalist>
-    </div>
-
+    <div class="form-group"><label>Contractor Name (Theekhedar)</label><input type="text" id="ce_name" placeholder="Contractor name..." list="contractorList"><datalist id="contractorList"></datalist></div>
     <div class="row2">
-      <div class="form-group">
-        <label>Item Code</label>
-        <input type="text" id="ce_code" placeholder="Code" list="itemCodeList" oninput="autoFillItem()">
-        <datalist id="itemCodeList"></datalist>
-      </div>
-      <div class="form-group">
-        <label>Qty</label>
-        <input type="number" id="ce_qty" placeholder="0" oninput="calcAmount()">
-      </div>
+      <div class="form-group"><label>Item Code</label><input type="text" id="ce_code" placeholder="Code" list="itemCodeList" oninput="autoFillItem()"><datalist id="itemCodeList"></datalist></div>
+      <div class="form-group"><label>Qty</label><input type="number" id="ce_qty" placeholder="0" oninput="calcAmount()"></div>
     </div>
-
-    <div class="form-group">
-      <label>Item Description</label>
-      <input type="text" id="ce_desc" placeholder="Description...">
-    </div>
-
+    <div class="form-group"><label>Item Description</label><input type="text" id="ce_desc" placeholder="Description..."></div>
     <div class="row2">
-      <div class="form-group">
-        <label>Rate (PKR)</label>
-        <input type="number" id="ce_rate" placeholder="0.00" oninput="calcAmount()">
-      </div>
-      <div class="form-group">
-        <label>Amount (Qty × Rate)</label>
-        <input type="text" id="ce_amount" class="amount-box" readonly placeholder="Auto">
-      </div>
+      <div class="form-group"><label>Rate (PKR)</label><input type="number" id="ce_rate" placeholder="0.00" oninput="calcAmount()"></div>
+      <div class="form-group"><label>Amount (Qty × Rate)</label><input type="text" id="ce_amount" class="amount-box" readonly placeholder="Auto"></div>
     </div>
-
     <button class="btn btn-primary" onclick="saveContractorEntry()">💾 SAVE ENTRY</button>
   </div>
-
   <div class="card">
     <div class="card-title">📋 Contractor Entries</div>
     <div class="tbl-wrap">
       <table id="ceTable">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Contractor</th>
-            <th>Code</th>
-            <th>Description</th>
-            <th>Qty</th>
-            <th>Rate</th>
-            <th>Amount</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Date</th><th>Contractor</th><th>Code</th><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th><th>Action</th></tr></thead>
         <tbody id="ceTbody"></tbody>
       </table>
     </div>
@@ -961,75 +377,37 @@ canvas { max-width: 100%; }
   </div>
 </div>
 
-<!-- ==================== REPORT PAGE ==================== -->
+<!-- REPORT PAGE -->
 <div class="page" id="reportPage">
   <div class="card">
     <div class="card-title">📊 Reports</div>
-
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
       <button class="btn btn-sm btn-primary" onclick="showReport('itemRates')">Item Rate List</button>
       <button class="btn btn-sm btn-gold" onclick="showReport('contractor')">Contractor Report</button>
     </div>
-
-    <!-- Item Rate Report -->
     <div id="rpt_itemRates" style="display:none">
-      <div class="report-header">
-        <h2>FGi — ITEM RATE LIST</h2>
-        <p id="rpt_itemDate">Generated: —</p>
-      </div>
+      <div class="report-header"><h2>FGi — ITEM RATE LIST</h2><p id="rpt_itemDate">Generated: —</p></div>
       <div class="tbl-wrap">
         <table id="rptItemTable">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Code</th>
-              <th>Description</th>
-              <th>Qty</th>
-              <th>Rate</th>
-              <th>Category</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Date</th><th>Code</th><th>Description</th><th>Qty</th><th>Rate</th><th>Category</th></tr></thead>
           <tbody id="rptItemTbody"></tbody>
         </table>
       </div>
       <button class="btn btn-teal btn-sm" onclick="downloadReport('itemRates')" style="margin-top:10px;width:auto">📥 Download Image</button>
     </div>
-
-    <!-- Contractor Report -->
     <div id="rpt_contractor" style="display:none">
-      <div class="form-group">
-        <label>Select Contractor</label>
-        <select id="rptContractorSelect" onchange="buildContractorReport()">
-          <option value="">-- Select --</option>
-        </select>
-      </div>
+      <div class="form-group"><label>Select Contractor</label><select id="rptContractorSelect" onchange="buildContractorReport()"><option value="">-- Select --</option></select></div>
       <div class="form-group row2">
-        <div>
-          <label>Month</label>
-          <select id="rptMonth" onchange="buildContractorReport()">
-            <option value="">All</option>
-            <option value="01">January</option><option value="02">February</option>
-            <option value="03">March</option><option value="04">April</option>
-            <option value="05">May</option><option value="06">June</option>
-            <option value="07">July</option><option value="08">August</option>
-            <option value="09">September</option><option value="10">October</option>
-            <option value="11">November</option><option value="12">December</option>
-          </select>
-        </div>
-        <div>
-          <label>Year (YY)</label>
-          <input type="text" id="rptYear" placeholder="26" maxlength="2" oninput="buildContractorReport()">
-        </div>
+        <div><label>Month</label><select id="rptMonth" onchange="buildContractorReport()"><option value="">All</option><option value="01">January</option><option value="02">February</option><option value="03">March</option><option value="04">April</option><option value="05">May</option><option value="06">June</option><option value="07">July</option><option value="08">August</option><option value="09">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option></select></div>
+        <div><label>Year (YY)</label><input type="text" id="rptYear" placeholder="26" maxlength="2" oninput="buildContractorReport()"></div>
       </div>
-
       <div id="contractorReportBody"></div>
-
-      <button class="btn btn-teal btn-sm" onclick="downloadReport('contractor')" style="margin-top:10px;width:auto" id="dlContractorBtn">📥 Download Image</button>
+      <button class="btn btn-teal btn-sm" onclick="downloadReport('contractor')" style="margin-top:10px;width:auto">📥 Download Image</button>
     </div>
   </div>
 </div>
 
-<!-- ==================== CALCULATOR PAGE ==================== -->
+<!-- CALCULATOR PAGE -->
 <div class="page" id="calcPage">
   <div class="card">
     <div class="card-title">🔢 Calculator</div>
@@ -1042,34 +420,27 @@ canvas { max-width: 100%; }
       <button class="calc-key k-bk" onclick="calcKey('⌫')">⌫</button>
       <button class="calc-key k-op" onclick="calcKey('%')">%</button>
       <button class="calc-key k-op" onclick="calcKey('÷')">÷</button>
-
       <button class="calc-key k-num" onclick="calcKey('7')">7</button>
       <button class="calc-key k-num" onclick="calcKey('8')">8</button>
       <button class="calc-key k-num" onclick="calcKey('9')">9</button>
       <button class="calc-key k-op" onclick="calcKey('×')">×</button>
-
       <button class="calc-key k-num" onclick="calcKey('4')">4</button>
       <button class="calc-key k-num" onclick="calcKey('5')">5</button>
       <button class="calc-key k-num" onclick="calcKey('6')">6</button>
       <button class="calc-key k-op" onclick="calcKey('-')">−</button>
-
       <button class="calc-key k-num" onclick="calcKey('1')">1</button>
       <button class="calc-key k-num" onclick="calcKey('2')">2</button>
       <button class="calc-key k-num" onclick="calcKey('3')">3</button>
       <button class="calc-key k-op" onclick="calcKey('+')">+</button>
-
       <button class="calc-key k-num" onclick="calcKey('00')">00</button>
       <button class="calc-key k-num" onclick="calcKey('0')">0</button>
       <button class="calc-key k-num" onclick="calcKey('.')">.</button>
       <button class="calc-key k-eq" onclick="calcKey('=')">=</button>
     </div>
   </div>
-
   <div class="card">
     <div class="card-title">📜 Calculation History</div>
-    <div class="hist-list" id="histList">
-      <div class="empty"><div class="empty-icon">🔢</div>No calculations yet</div>
-    </div>
+    <div class="hist-list" id="histList"><div class="empty"><div class="empty-icon">🔢</div>No calculations yet</div></div>
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
       <button class="btn btn-sm btn-primary" onclick="sumSelected()">Σ Sum Selected</button>
       <button class="btn btn-sm btn-gold" onclick="selectAllHist()">☑ Select All</button>
@@ -1079,153 +450,185 @@ canvas { max-width: 100%; }
   </div>
 </div>
 
-<!-- ==================== MODALS ==================== -->
-
-<!-- Import/Export Modal -->
+<!-- IMPORT/EXPORT MODAL -->
 <div class="modal-overlay" id="ieModal" style="display:none">
   <div class="modal">
-    <div class="modal-title">⇅ Import / Export
-      <button class="close-btn" onclick="closeModal('ieModal')">✕</button>
-    </div>
+    <div class="modal-title">⇅ Import / Export<button class="close-btn" onclick="closeModal('ieModal')">✕</button></div>
     <div style="display:flex;flex-direction:column;gap:10px">
       <button class="btn btn-primary" onclick="exportData()">📤 Export All Data (JSON)</button>
       <button class="btn btn-gold" onclick="document.getElementById('importFile').click()">📥 Import Data (JSON)</button>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-      <p style="font-size:12px;color:var(--sub);text-align:center">Export saves all data. Import will merge with existing data.</p>
+      <p style="font-size:12px;color:var(--sub);text-align:center">Export saves all data. Import will merge.</p>
     </div>
   </div>
 </div>
 
-<!-- Settings Modal -->
+<!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settingsModal" style="display:none">
   <div class="modal">
-    <div class="modal-title">⚙️ Settings
-      <button class="close-btn" onclick="closeModal('settingsModal')">✕</button>
-    </div>
-    <div class="form-group">
-      <label>Change PIN (4 digits)</label>
-      <input type="password" id="newPin" placeholder="New PIN" maxlength="4">
-    </div>
-    <div class="form-group">
-      <input type="password" id="newPinConfirm" placeholder="Confirm PIN" maxlength="4">
-    </div>
+    <div class="modal-title">⚙️ Settings<button class="close-btn" onclick="closeModal('settingsModal')">✕</button></div>
+    <div class="form-group"><label>Change PIN (4 digits)</label><input type="password" id="newPin" placeholder="New PIN" maxlength="4"></div>
+    <div class="form-group"><input type="password" id="newPinConfirm" placeholder="Confirm PIN" maxlength="4"></div>
     <button class="btn btn-primary" onclick="changePin()">🔒 Update PIN</button>
+    <hr style="margin:14px 0;border-color:var(--border)">
+    <!-- SECRET Q -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div><div style="font-weight:700;font-size:14px;">🔑 Secret Question</div><div id="sqStatusDesc" style="font-size:11px;color:var(--sub);margin-top:2px;">Set nahi</div></div>
+      <button class="btn btn-sm btn-primary" style="width:auto" onclick="toggleSQSettingsForm()">⚙️ Set</button>
+    </div>
+    <div id="sqSettingsForm">
+      <div class="form-group">
+        <label>Secret Sawaal</label>
+        <select id="sq_select"><option value="">-- Sawaal chunein --</option><option>Aapki ammi ka naam kya hai?</option><option>Aapke school ka naam kya tha?</option><option>Aapka pehla dost kaun tha?</option><option>Aapke ghar ka mohalla kaunsa hai?</option><option>Aapka favorite khana kya hai?</option><option>Aapki pehli bike ya car?</option><option>Aapke abbu ka pehla naam?</option><option>Aapka gaon ya shehar?</option></select>
+      </div>
+      <div class="form-group"><label>Jawab</label><input type="text" id="sq_answer" placeholder="Jawab — yaad rakhein!" maxlength="50"></div>
+      <button class="btn btn-primary" onclick="saveSQSettings()">💾 Save Question</button>
+    </div>
     <hr style="margin:14px 0;border-color:var(--border)">
     <button class="btn btn-red" onclick="clearAllData()">🗑 Clear All Data</button>
   </div>
 </div>
 
-<!-- Category Add Modal -->
+<!-- CATEGORY MODAL -->
 <div class="modal-overlay" id="catModal" style="display:none">
   <div class="modal">
-    <div class="modal-title">+ New Category
-      <button class="close-btn" onclick="closeModal('catModal')">✕</button>
-    </div>
-    <div class="form-group">
-      <label>Category Name</label>
-      <input type="text" id="newCatName" placeholder="e.g. Metal Welder">
-    </div>
+    <div class="modal-title">+ New Category<button class="close-btn" onclick="closeModal('catModal')">✕</button></div>
+    <div class="form-group"><label>Category Name</label><input type="text" id="newCatName" placeholder="e.g. Metal Welder"></div>
     <button class="btn btn-primary" onclick="saveNewCategory()">💾 Save</button>
   </div>
 </div>
 
-<!-- Date Picker Modal -->
+<!-- DATE PICKER -->
 <div id="datePickerOverlay" class="date-picker-overlay" style="display:none" onclick="closeDatePickerOutside(event)">
   <div class="date-picker-sheet">
-    <div class="dp-title">
-      <span>📅 Select Date</span>
-      <button class="close-btn" onclick="closeDatePicker()">✕</button>
-    </div>
+    <div class="dp-title"><span>📅 Select Date</span><button class="close-btn" onclick="closeDatePicker()">✕</button></div>
     <div class="dp-nav">
       <button class="dp-nav-btn" onclick="dpChangeMonth(-1)">‹</button>
       <span class="dp-month-label" id="dpMonthLabel"></span>
       <button class="dp-nav-btn" onclick="dpChangeMonth(1)">›</button>
     </div>
     <div class="dp-grid">
-      <div class="dp-day-name">Su</div><div class="dp-day-name">Mo</div>
-      <div class="dp-day-name">Tu</div><div class="dp-day-name">We</div>
-      <div class="dp-day-name">Th</div><div class="dp-day-name">Fr</div>
-      <div class="dp-day-name">Sa</div>
+      <div class="dp-day-name">Su</div><div class="dp-day-name">Mo</div><div class="dp-day-name">Tu</div>
+      <div class="dp-day-name">We</div><div class="dp-day-name">Th</div><div class="dp-day-name">Fr</div><div class="dp-day-name">Sa</div>
     </div>
     <div class="dp-grid" id="dpCells"></div>
     <button class="btn btn-primary" onclick="confirmDate()" style="margin-top:12px">✅ Confirm</button>
   </div>
 </div>
 
-<canvas id="reportCanvas"></canvas>
+<canvas id="reportCanvas" style="display:none"></canvas>
 
 <script>
 // ============================================================
-//  DATABASE (localStorage as SQLite-like store)
+//  DATABASE — localStorage
 // ============================================================
 const DB = {
-  get(k){ try{ return JSON.parse(localStorage.getItem('fgi_'+k))||null }catch{ return null }},
-  set(k,v){ localStorage.setItem('fgi_'+k, JSON.stringify(v)) },
-  contractItems(){ return this.get('items')||[] },
-  contractorEntries(){ return this.get('entries')||[] },
-  categories(){ return this.get('cats')||['Metal Polisher','Metal Caster'] },
-  calcHistory(){ return this.get('calc')||[] },
-  pin(){ return this.get('pin')||'8007' },
-  setPin(p){ this.set('pin',p) },
-  saveItems(d){ this.set('items',d) },
-  saveEntries(d){ this.set('entries',d) },
-  saveCats(d){ this.set('cats',d) },
-  saveCalc(d){ this.set('calc',d) },
+  get(k){ try{ return JSON.parse(localStorage.getItem('fgi_'+k))||null; }catch{ return null; } },
+  set(k,v){ localStorage.setItem('fgi_'+k, JSON.stringify(v)); },
+  contractItems(){ return this.get('items')||[]; },
+  contractorEntries(){ return this.get('entries')||[]; },
+  categories(){ return this.get('cats')||['Metal Polisher','Metal Caster']; },
+  calcHistory(){ return this.get('calc')||[]; },
+  pin(){ return this.get('pin')||'8007'; },
+  setPin(p){ this.set('pin',p); },
+  saveItems(d){ this.set('items',d); },
+  saveEntries(d){ this.set('entries',d); },
+  saveCats(d){ this.set('cats',d); },
+  saveCalc(d){ this.set('calc',d); }
 };
 
 // ============================================================
-//  PIN / LOCK
+//  IndexedDB — PIN & Secret Q
 // ============================================================
-let pinBuffer = '';
+const CIDB='FGIContractorSec', CIDB_ST='sec';
+let cidb=null;
+function openCIDB(){
+  return new Promise(res=>{
+    try{
+      const r=indexedDB.open(CIDB,1);
+      r.onupgradeneeded=e=>e.target.result.createObjectStore(CIDB_ST);
+      r.onsuccess=e=>{cidb=e.target.result;res();};
+      r.onerror=()=>res();
+    }catch(e){res();}
+  });
+}
+const cidbSet=(k,v)=>new Promise(res=>{if(!cidb){res();return;}const tx=cidb.transaction(CIDB_ST,'readwrite');tx.objectStore(CIDB_ST).put(v,k);tx.oncomplete=()=>res();tx.onerror=()=>res();});
+const cidbGet=(k)=>new Promise(res=>{if(!cidb){res(null);return;}const tx=cidb.transaction(CIDB_ST,'readonly');const r=tx.objectStore(CIDB_ST).get(k);r.onsuccess=()=>res(r.result??null);r.onerror=()=>res(null);});
 
-function pinPress(d){
-  if(pinBuffer.length>=4) return;
-  pinBuffer += d;
-  updateDots();
-  if(pinBuffer.length===4) setTimeout(checkPin,100);
+async function getPIN(){const p=await cidbGet('pin');return p||DB.pin();}
+async function setPIN(p){await cidbSet('pin',p);DB.setPin(p);}
+async function getSQ(){const r=await cidbGet('sq')||localStorage.getItem('fgic_sq');return r?JSON.parse(r):null;}
+async function setSQ(q,a){const d=JSON.stringify({q,a:a.toLowerCase().trim()});await cidbSet('sq',d);localStorage.setItem('fgic_sq',d);}
+
+// ============================================================
+//  PIN LOCK
+// ============================================================
+let pinBuffer='';
+function pinPress(d){if(pinBuffer.length>=4)return;pinBuffer+=d;updateDots();if(pinBuffer.length===4)setTimeout(checkPin,100);}
+function pinDel(){pinBuffer=pinBuffer.slice(0,-1);updateDots();}
+function pinClear(){pinBuffer='';updateDots();}
+function updateDots(){for(let i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('filled',i<pinBuffer.length);}
+function checkPin(){checkPinAsync();}
+async function checkPinAsync(){
+  const correct=await getPIN();
+  if(pinBuffer===correct){document.getElementById('lockScreen').style.display='none';initApp();}
+  else{document.getElementById('pinError').textContent='❌ Wrong PIN';pinBuffer='';updateDots();setTimeout(()=>{document.getElementById('pinError').textContent='';},1500);}
 }
 
-function pinDel(){
-  pinBuffer = pinBuffer.slice(0,-1);
-  updateDots();
+function changePin(){changePinAsync();}
+async function changePinAsync(){
+  const p=document.getElementById('newPin').value;const c=document.getElementById('newPinConfirm').value;
+  if(p.length!==4||!/^\d{4}$/.test(p)){showToast('PIN must be 4 digits');return;}
+  if(p!==c){showToast('PINs do not match');return;}
+  await setPIN(p);closeModal('settingsModal');showToast('✅ PIN updated');
 }
 
-function pinClear(){
-  pinBuffer = '';
-  updateDots();
+// ============================================================
+//  SECRET Q & FORGOT PIN
+// ============================================================
+async function saveSQSettings(){
+  const q=document.getElementById('sq_select').value;const a=document.getElementById('sq_answer').value.trim();
+  if(!q){showToast('Sawaal chunein!');return;}if(!a||a.length<2){showToast('Jawab likhein!');return;}
+  await setSQ(q,a);document.getElementById('sq_answer').value='';document.getElementById('sqSettingsForm').style.display='none';
+  showToast('✅ Secret question saved!');updateSQStatus();
+}
+async function updateSQStatus(){const d=await getSQ();const el=document.getElementById('sqStatusDesc');if(el)el.innerHTML=d?'✅ Set: <b>'+d.q+'</b>':'⚠️ Set nahi';}
+function toggleSQSettingsForm(){const f=document.getElementById('sqSettingsForm');f.style.display=f.style.display==='none'||f.style.display===''?'block':'none';}
+async function showForgotPin(){
+  const d=await getSQ();if(!d){showToast('Settings mein secret question pehle set karein!');return;}
+  document.getElementById('pinPad').style.display='none';document.getElementById('forgotPinSection').style.display='block';
+  document.getElementById('fpQuestion').textContent='❓ '+d.q;document.getElementById('fpAnswer').value='';document.getElementById('fpError').textContent='';
+}
+function hideForgotPin(){document.getElementById('forgotPinSection').style.display='none';document.getElementById('pinPad').style.display='grid';}
+async function verifyForgotPin(){
+  const d=await getSQ();const a=document.getElementById('fpAnswer').value.trim().toLowerCase();const el=document.getElementById('fpError');
+  if(!a){el.textContent='Jawab likhein!';return;}if(!d){el.textContent='Question nahi mila!';return;}
+  if(a===d.a||d.a.includes(a)||a.includes(d.a)){el.style.color='#00b894';el.textContent='✅ Sahi jawab!';setTimeout(()=>{hideForgotPin();document.getElementById('pinError').style.color='#00b894';document.getElementById('pinError').textContent='Naya PIN Settings mein set karein';},800);}
+  else{el.style.color='#ff6b6b';el.textContent='❌ Galat jawab!';}
 }
 
-function updateDots(){
-  for(let i=0;i<4;i++){
-    document.getElementById('d'+i).classList.toggle('filled', i<pinBuffer.length);
-  }
-}
-
-function checkPin(){
-  if(pinBuffer === DB.pin()){
-    document.getElementById('lockScreen').style.display='none';
-    initApp();
-  } else {
-    document.getElementById('pinError').textContent='❌ Wrong PIN';
-    pinBuffer='';
-    updateDots();
-    setTimeout(()=>{ document.getElementById('pinError').textContent=''; },1500);
-  }
-}
+// ============================================================
+//  FOLDER PICKER
+// ============================================================
+let _fpBlob=null,_fpFname=null;
+function openFolderPicker(title,sub,blob,name){_fpBlob=blob;_fpFname=name;document.getElementById('fpModalTitle').textContent=title||'📁 Kahan Save Karein?';document.getElementById('fpModalSub').textContent=sub||'';document.getElementById('fpModal').style.display='flex';}
+function closeFolderPicker(){document.getElementById('fpModal').style.display='none';_fpBlob=null;_fpFname=null;}
+function folderPickerAction(t){const b=_fpBlob,n=_fpFname;closeFolderPicker();if(!b)return;if(t==='sh'){const f=new File([b],n,{type:b.type});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'FGI Contractor'}).catch(()=>_dlBlob(b,n));return;}}_dlBlob(b,n);}
+function _dlBlob(b,n){const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(u);},2000);showToast('✅ Downloaded!');}
 
 // ============================================================
 //  NAVIGATION
 // ============================================================
-function goPage(id, btn){
+function goPage(id,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if(btn) btn.classList.add('active');
+  if(btn)btn.classList.add('active');
   window.scrollTo(0,0);
-  if(id==='dashPage') updateDash();
-  if(id==='addItemPage') renderItems();
-  if(id==='contractorPage') renderContractorPage();
-  if(id==='reportPage') populateReportDropdown();
+  if(id==='dashPage')updateDash();
+  if(id==='addItemPage')renderItems();
+  if(id==='contractorPage')renderContractorPage();
+  if(id==='reportPage')populateReportDropdown();
 }
 
 // ============================================================
@@ -1233,28 +636,19 @@ function goPage(id, btn){
 // ============================================================
 function initApp(){
   renderCategoryPills('ai_catPills');
-  renderCategoryPills('ce_catPills', true);
-  updateDash();
-  setTodayDate();
+  renderCategoryPills('ce_catPills',true);
+  updateDash();setTodayDate();renderCalcHistory();updateItemDataLists();
 }
 
 function setTodayDate(){
-  const d=new Date();
-  const dd=String(d.getDate()).padStart(2,'0');
-  const mm=String(d.getMonth()+1).padStart(2,'0');
-  const yy=String(d.getFullYear()).slice(-2);
-  const dateStr=`${dd}/${mm}/${yy}`;
-  document.getElementById('ai_date').value=dateStr;
-  document.getElementById('ce_date').value=dateStr;
-  document.getElementById('ai_dateDisplay').textContent=dateStr;
-  document.getElementById('ce_dateDisplay').textContent=dateStr;
-  // set dp current to today
-  dpYear=d.getFullYear(); dpMonth=d.getMonth(); dpDay=d.getDate();
+  const d=new Date();const dd=String(d.getDate()).padStart(2,'0');const mm=String(d.getMonth()+1).padStart(2,'0');const yy=String(d.getFullYear()).slice(-2);const dateStr=`${dd}/${mm}/${yy}`;
+  document.getElementById('ai_date').value=dateStr;document.getElementById('ce_date').value=dateStr;
+  document.getElementById('ai_dateDisplay').textContent=dateStr;document.getElementById('ce_dateDisplay').textContent=dateStr;
+  dpYear=d.getFullYear();dpMonth=d.getMonth();dpDay=d.getDate();
 }
 
 function updateDash(){
-  const items=DB.contractItems();
-  const entries=DB.contractorEntries();
+  const items=DB.contractItems();const entries=DB.contractorEntries();
   const contractors=[...new Set(entries.map(e=>e.name))];
   const total=entries.reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
   document.getElementById('statItems').textContent=items.length;
@@ -1264,672 +658,181 @@ function updateDash(){
   renderDashRecent(entries);
 }
 
-function formatPKR(n,short=false){
-  if(short && n>=1000000) return (n/1000000).toFixed(1)+'M';
-  if(short && n>=1000) return (n/1000).toFixed(0)+'K';
-  return Number(n).toLocaleString('en-PK',{minimumFractionDigits:0,maximumFractionDigits:2});
-}
+function formatPKR(n,short=false){if(short&&n>=1000000)return(n/1000000).toFixed(1)+'M';if(short&&n>=1000)return(n/1000).toFixed(0)+'K';return Number(n).toLocaleString('en-PK',{minimumFractionDigits:0,maximumFractionDigits:2});}
 
 function renderDashRecent(entries){
-  const el=document.getElementById('dashRecent');
-  const last5=entries.slice(-5).reverse();
-  if(!last5.length){ el.innerHTML='<div class="empty"><div class="empty-icon">📭</div>No entries yet</div>'; return; }
-  el.innerHTML=`<div class="tbl-wrap"><table>
-    <thead><tr><th>Date</th><th>Contractor</th><th>Item</th><th>Amount</th></tr></thead>
-    <tbody>${last5.map(e=>`<tr>
-      <td>${e.date}</td>
-      <td>${e.name}</td>
-      <td>${e.desc}</td>
-      <td style="color:var(--teal);font-weight:700">PKR ${formatPKR(e.amount)}</td>
-    </tr>`).join('')}</tbody>
-  </table></div>`;
+  const el=document.getElementById('dashRecent');const last5=entries.slice(-5).reverse();
+  if(!last5.length){el.innerHTML='<div class="empty"><div class="empty-icon">📭</div>No entries yet</div>';return;}
+  el.innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Contractor</th><th>Item</th><th>Amount</th></tr></thead><tbody>${last5.map(e=>`<tr><td>${e.date}</td><td>${e.name}</td><td>${e.desc}</td><td style="color:var(--teal);font-weight:700">PKR ${formatPKR(e.amount)}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
 // ============================================================
 //  CATEGORIES
 // ============================================================
-let selectedAddItemCat = '';
-let selectedCeCat = '';
-
-function renderCategoryPills(containerId, isContractor=false){
-  const cats=DB.categories();
-  const el=document.getElementById(containerId);
-  if(!el) return;
-  el.innerHTML='';
-  cats.forEach(c=>{
-    const btn=document.createElement('button');
-    btn.className='cat-pill';
-    btn.textContent=c;
-    btn.onclick=()=>{
-      el.querySelectorAll('.cat-pill').forEach(b=>b.classList.remove('selected'));
-      btn.classList.add('selected');
-      if(isContractor){ selectedCeCat=c; filterItemsByCat(c); }
-      else selectedAddItemCat=c;
-    };
-    el.appendChild(btn);
-  });
-}
-
-function addCategoryPrompt(){
-  document.getElementById('newCatName').value='';
-  document.getElementById('catModal').style.display='flex';
-}
-
-function saveNewCategory(){
-  const name=document.getElementById('newCatName').value.trim();
-  if(!name){ showToast('Category name required'); return; }
-  const cats=DB.categories();
-  if(cats.includes(name)){ showToast('Already exists'); return; }
-  cats.push(name);
-  DB.saveCats(cats);
-  closeModal('catModal');
-  renderCategoryPills('ai_catPills');
-  renderCategoryPills('ce_catPills',true);
-  showToast('✅ Category added: '+name);
-}
+let selectedAddItemCat='',selectedCeCat='';
+function renderCategoryPills(cid,isC=false){const cats=DB.categories();const el=document.getElementById(cid);if(!el)return;el.innerHTML='';cats.forEach(c=>{const btn=document.createElement('button');btn.className='cat-pill';btn.textContent=c;btn.onclick=()=>{el.querySelectorAll('.cat-pill').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');if(isC){selectedCeCat=c;filterItemsByCat(c);}else selectedAddItemCat=c;};el.appendChild(btn);});}
+function addCategoryPrompt(){document.getElementById('newCatName').value='';document.getElementById('catModal').style.display='flex';}
+function saveNewCategory(){const name=document.getElementById('newCatName').value.trim();if(!name){showToast('Category name required');return;}const cats=DB.categories();if(cats.includes(name)){showToast('Already exists');return;}cats.push(name);DB.saveCats(cats);closeModal('catModal');renderCategoryPills('ai_catPills');renderCategoryPills('ce_catPills',true);showToast('✅ Category added: '+name);}
 
 // ============================================================
-//  CONTRACT ITEMS (Add Item Page)
+//  CONTRACT ITEMS
 // ============================================================
 function saveContractItem(){
-  const date=document.getElementById('ai_date').value.trim();
-  const code=document.getElementById('ai_code').value.trim();
-  const desc=document.getElementById('ai_desc').value.trim();
-  const qty=document.getElementById('ai_qty').value.trim();
-  const rate=document.getElementById('ai_rate').value.trim();
-  const cat=selectedAddItemCat;
-
-  if(!date||!desc||!qty||!rate){ showToast('❌ Fill required fields'); return; }
-  if(!validateDate(date)){ showToast('❌ Date format: DD/MM/YY'); return; }
-
-  const items=DB.contractItems();
-  items.push({ id:Date.now(), date, code, desc, qty:parseFloat(qty), rate:parseFloat(rate), cat });
-  DB.saveItems(items);
-  renderItems();
-  updateItemDataLists();
-  document.getElementById('ai_code').value='';
-  document.getElementById('ai_desc').value='';
-  document.getElementById('ai_qty').value='';
-  document.getElementById('ai_rate').value='';
-  selectedAddItemCat='';
-  document.querySelectorAll('#ai_catPills .cat-pill').forEach(b=>b.classList.remove('selected'));
-  showToast('✅ Item saved');
+  const date=document.getElementById('ai_date').value.trim();const code=document.getElementById('ai_code').value.trim();const desc=document.getElementById('ai_desc').value.trim();const qty=document.getElementById('ai_qty').value.trim();const rate=document.getElementById('ai_rate').value.trim();const cat=selectedAddItemCat;
+  if(!date||!desc||!qty||!rate){showToast('❌ Fill required fields');return;}if(!validateDate(date)){showToast('❌ Date format: DD/MM/YY');return;}
+  const items=DB.contractItems();items.push({id:Date.now(),date,code,desc,qty:parseFloat(qty),rate:parseFloat(rate),cat});DB.saveItems(items);renderItems();updateItemDataLists();
+  document.getElementById('ai_code').value='';document.getElementById('ai_desc').value='';document.getElementById('ai_qty').value='';document.getElementById('ai_rate').value='';selectedAddItemCat='';document.querySelectorAll('#ai_catPills .cat-pill').forEach(b=>b.classList.remove('selected'));showToast('✅ Item saved');
 }
-
-function validateDate(d){
-  return /^\d{2}\/\d{2}\/\d{2}$/.test(d);
-}
-
+function validateDate(d){return /^\d{2}\/\d{2}\/\d{2}$/.test(d);}
 function renderItems(){
-  const items=DB.contractItems();
-  const tbody=document.getElementById('itemsTbody');
-  const empty=document.getElementById('itemsEmpty');
-  if(!items.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display='none';
-  tbody.innerHTML=items.map((it,i)=>`<tr>
-    <td>${it.date}</td>
-    <td><b>${it.code}</b></td>
-    <td>${it.desc}</td>
-    <td>${it.qty}</td>
-    <td>PKR ${formatPKR(it.rate)}</td>
-    <td>${it.cat||'-'}</td>
-    <td>
-      <div class="tbl-actions">
-        <button class="btn btn-sm btn-red" onclick="deleteItem(${it.id})">🗑</button>
-      </div>
-    </td>
-  </tr>`).join('');
+  const items=DB.contractItems();const tbody=document.getElementById('itemsTbody');const empty=document.getElementById('itemsEmpty');
+  if(!items.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';tbody.innerHTML=items.map(it=>`<tr><td>${it.date}</td><td><b>${it.code}</b></td><td>${it.desc}</td><td>${it.qty}</td><td>PKR ${formatPKR(it.rate)}</td><td>${it.cat||'-'}</td><td><div class="tbl-actions"><button class="btn btn-sm btn-red" onclick="deleteItem(${it.id})">🗑</button></div></td></tr>`).join('');
 }
-
-function deleteItem(id){
-  if(!confirm('Delete this item?')) return;
-  const items=DB.contractItems().filter(i=>i.id!==id);
-  DB.saveItems(items);
-  renderItems();
-  updateItemDataLists();
-  showToast('🗑 Item deleted');
-}
-
+function deleteItem(id){if(!confirm('Delete this item?'))return;const items=DB.contractItems().filter(i=>i.id!==id);DB.saveItems(items);renderItems();updateItemDataLists();showToast('🗑 Item deleted');}
 function updateItemDataLists(){
-  const items=DB.contractItems();
-  const codeList=document.getElementById('itemCodeList');
-  if(codeList) codeList.innerHTML=items.map(i=>`<option value="${i.code}">${i.code} — ${i.desc}</option>`).join('');
-  const nameList=document.getElementById('contractorList');
-  if(nameList){
-    const names=[...new Set(DB.contractorEntries().map(e=>e.name))];
-    nameList.innerHTML=names.map(n=>`<option value="${n}">`).join('');
-  }
+  const items=DB.contractItems();const codeList=document.getElementById('itemCodeList');if(codeList)codeList.innerHTML=items.map(i=>`<option value="${i.code}">${i.code} — ${i.desc}</option>`).join('');
+  const nameList=document.getElementById('contractorList');if(nameList){const names=[...new Set(DB.contractorEntries().map(e=>e.name))];nameList.innerHTML=names.map(n=>`<option value="${n}">`).join('');}
 }
 
 // ============================================================
 //  CONTRACTOR ENTRIES
 // ============================================================
-function autoFillItem(){
-  const code=document.getElementById('ce_code').value.trim().toUpperCase();
-  const items=DB.contractItems();
-  const match=items.find(i=>i.code.toUpperCase()===code && (!selectedCeCat || i.cat===selectedCeCat));
-  if(match){
-    document.getElementById('ce_desc').value=match.desc;
-    document.getElementById('ce_rate').value=match.rate;
-    calcAmount();
-  }
-}
-
-function filterItemsByCat(cat){
-  const items=DB.contractItems();
-  const codeList=document.getElementById('itemCodeList');
-  const filtered=items.filter(i=>!cat||i.cat===cat);
-  if(codeList) codeList.innerHTML=filtered.map(i=>`<option value="${i.code}">${i.code} — ${i.desc}</option>`).join('');
-}
-
-function calcAmount(){
-  const qty=parseFloat(document.getElementById('ce_qty').value)||0;
-  const rate=parseFloat(document.getElementById('ce_rate').value)||0;
-  document.getElementById('ce_amount').value=qty&&rate ? formatPKR(qty*rate) : '';
-}
-
+function autoFillItem(){const code=document.getElementById('ce_code').value.trim().toUpperCase();const items=DB.contractItems();const match=items.find(i=>i.code.toUpperCase()===code&&(!selectedCeCat||i.cat===selectedCeCat));if(match){document.getElementById('ce_desc').value=match.desc;document.getElementById('ce_rate').value=match.rate;calcAmount();}}
+function filterItemsByCat(cat){const items=DB.contractItems();const codeList=document.getElementById('itemCodeList');const filtered=items.filter(i=>!cat||i.cat===cat);if(codeList)codeList.innerHTML=filtered.map(i=>`<option value="${i.code}">${i.code} — ${i.desc}</option>`).join('');}
+function calcAmount(){const qty=parseFloat(document.getElementById('ce_qty').value)||0;const rate=parseFloat(document.getElementById('ce_rate').value)||0;document.getElementById('ce_amount').value=qty&&rate?formatPKR(qty*rate):'';}
 function saveContractorEntry(){
-  const date=document.getElementById('ce_date').value.trim();
-  const name=document.getElementById('ce_name').value.trim();
-  const code=document.getElementById('ce_code').value.trim();
-  const desc=document.getElementById('ce_desc').value.trim();
-  const qty=parseFloat(document.getElementById('ce_qty').value)||0;
-  const rate=parseFloat(document.getElementById('ce_rate').value)||0;
-
-  if(!date||!name||!code||!desc||!qty||!rate){ showToast('❌ Fill all required fields'); return; }
-  if(!validateDate(date)){ showToast('❌ Date format: DD/MM/YY'); return; }
-
-  const amount=qty*rate;
-  const entries=DB.contractorEntries();
-  entries.push({ id:Date.now(), date, name, code, desc, qty, rate, amount, cat:selectedCeCat });
-  DB.saveEntries(entries);
-  renderContractorPage();
-  updateItemDataLists();
-  document.getElementById('ce_name').value='';
-  document.getElementById('ce_code').value='';
-  document.getElementById('ce_desc').value='';
-  document.getElementById('ce_qty').value='';
-  document.getElementById('ce_rate').value='';
-  document.getElementById('ce_amount').value='';
-  showToast('✅ Entry saved — PKR '+formatPKR(amount));
+  const date=document.getElementById('ce_date').value.trim();const name=document.getElementById('ce_name').value.trim();const code=document.getElementById('ce_code').value.trim();const desc=document.getElementById('ce_desc').value.trim();const qty=parseFloat(document.getElementById('ce_qty').value)||0;const rate=parseFloat(document.getElementById('ce_rate').value)||0;
+  if(!date||!name||!code||!desc||!qty||!rate){showToast('❌ Fill all required fields');return;}if(!validateDate(date)){showToast('❌ Date format: DD/MM/YY');return;}
+  const amount=qty*rate;const entries=DB.contractorEntries();entries.push({id:Date.now(),date,name,code,desc,qty,rate,amount,cat:selectedCeCat});DB.saveEntries(entries);renderContractorPage();updateItemDataLists();
+  document.getElementById('ce_name').value='';document.getElementById('ce_code').value='';document.getElementById('ce_desc').value='';document.getElementById('ce_qty').value='';document.getElementById('ce_rate').value='';document.getElementById('ce_amount').value='';showToast('✅ Entry saved — PKR '+formatPKR(amount));
 }
-
 function renderContractorPage(){
-  const entries=DB.contractorEntries();
-  const tbody=document.getElementById('ceTbody');
-  const empty=document.getElementById('ceEmpty');
-  if(!entries.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display='none';
-  tbody.innerHTML=entries.map(e=>`<tr>
-    <td>${e.date}</td>
-    <td><b>${e.name}</b></td>
-    <td>${e.code}</td>
-    <td>${e.desc}</td>
-    <td>${e.qty}</td>
-    <td>${formatPKR(e.rate)}</td>
-    <td style="color:var(--teal);font-weight:700">${formatPKR(e.amount)}</td>
-    <td>
-      <div class="tbl-actions">
-        <button class="btn btn-sm btn-red" onclick="deleteEntry(${e.id})">🗑</button>
-      </div>
-    </td>
-  </tr>`).join('');
+  const entries=DB.contractorEntries();const tbody=document.getElementById('ceTbody');const empty=document.getElementById('ceEmpty');
+  if(!entries.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';tbody.innerHTML=entries.map(e=>`<tr><td>${e.date}</td><td><b>${e.name}</b></td><td>${e.code}</td><td>${e.desc}</td><td>${e.qty}</td><td>${formatPKR(e.rate)}</td><td style="color:var(--teal);font-weight:700">${formatPKR(e.amount)}</td><td><div class="tbl-actions"><button class="btn btn-sm btn-red" onclick="deleteEntry(${e.id})">🗑</button></div></td></tr>`).join('');
   updateItemDataLists();
 }
-
-function deleteEntry(id){
-  if(!confirm('Delete this entry?')) return;
-  const entries=DB.contractorEntries().filter(e=>e.id!==id);
-  DB.saveEntries(entries);
-  renderContractorPage();
-  showToast('🗑 Entry deleted');
-}
+function deleteEntry(id){if(!confirm('Delete this entry?'))return;const entries=DB.contractorEntries().filter(e=>e.id!==id);DB.saveEntries(entries);renderContractorPage();showToast('🗑 Entry deleted');}
 
 // ============================================================
 //  REPORTS
 // ============================================================
-function showReport(type){
-  document.getElementById('rpt_itemRates').style.display='none';
-  document.getElementById('rpt_contractor').style.display='none';
-  document.getElementById('rpt_'+type).style.display='block';
-
-  if(type==='itemRates'){
-    const items=DB.contractItems();
-    const tbody=document.getElementById('rptItemTbody');
-    tbody.innerHTML=items.map(it=>`<tr>
-      <td>${it.date}</td>
-      <td><b>${it.code}</b></td>
-      <td>${it.desc}</td>
-      <td>${it.qty}</td>
-      <td>PKR ${formatPKR(it.rate)}</td>
-      <td>${it.cat||'-'}</td>
-    </tr>`).join('');
-    document.getElementById('rpt_itemDate').textContent='Generated: '+new Date().toLocaleDateString('en-PK');
-  }
-}
-
-function populateReportDropdown(){
-  const entries=DB.contractorEntries();
-  const names=[...new Set(entries.map(e=>e.name))];
-  const sel=document.getElementById('rptContractorSelect');
-  sel.innerHTML='<option value="">-- Select Contractor --</option>'+names.map(n=>`<option value="${n}">${n}</option>`).join('');
-}
-
+function showReport(type){document.getElementById('rpt_itemRates').style.display='none';document.getElementById('rpt_contractor').style.display='none';document.getElementById('rpt_'+type).style.display='block';if(type==='itemRates'){const items=DB.contractItems();document.getElementById('rptItemTbody').innerHTML=items.map(it=>`<tr><td>${it.date}</td><td><b>${it.code}</b></td><td>${it.desc}</td><td>${it.qty}</td><td>PKR ${formatPKR(it.rate)}</td><td>${it.cat||'-'}</td></tr>`).join('');document.getElementById('rpt_itemDate').textContent='Generated: '+new Date().toLocaleDateString('en-PK');}}
+function populateReportDropdown(){const entries=DB.contractorEntries();const names=[...new Set(entries.map(e=>e.name))];const sel=document.getElementById('rptContractorSelect');sel.innerHTML='<option value="">-- Select Contractor --</option>'+names.map(n=>`<option value="${n}">${n}</option>`).join('');}
 function buildContractorReport(){
-  const name=document.getElementById('rptContractorSelect').value;
-  const month=document.getElementById('rptMonth').value;
-  const year=document.getElementById('rptYear').value;
-  const body=document.getElementById('contractorReportBody');
-
-  if(!name){ body.innerHTML=''; return; }
-
-  let entries=DB.contractorEntries().filter(e=>e.name===name);
-  if(month) entries=entries.filter(e=>e.date.split('/')[1]===month);
-  if(year) entries=entries.filter(e=>e.date.split('/')[2]===year);
-
-  if(!entries.length){ body.innerHTML='<div class="empty">No entries found</div>'; return; }
-
-  // Group by date
-  const byDate={};
-  entries.forEach(e=>{
-    if(!byDate[e.date]) byDate[e.date]=[];
-    byDate[e.date].push(e);
-  });
-
+  const name=document.getElementById('rptContractorSelect').value;const month=document.getElementById('rptMonth').value;const year=document.getElementById('rptYear').value;const body=document.getElementById('contractorReportBody');
+  if(!name){body.innerHTML='';return;}
+  let entries=DB.contractorEntries().filter(e=>e.name===name);if(month)entries=entries.filter(e=>e.date.split('/')[1]===month);if(year)entries=entries.filter(e=>e.date.split('/')[2]===year);
+  if(!entries.length){body.innerHTML='<div class="empty">No entries found</div>';return;}
+  const byDate={};entries.forEach(e=>{if(!byDate[e.date])byDate[e.date]=[];byDate[e.date].push(e);});
   const grand=entries.reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
-
-  let html=`<div class="report-header">
-    <h2>FGi — CONTRACTOR REPORT</h2>
-    <p>Contractor: <b>${name}</b></p>
-    <p>${month?'Month: '+month+' | ':''} ${year?'Year: '+year:''}</p>
-  </div>`;
-
-  Object.keys(byDate).sort().forEach(date=>{
-    const rows=byDate[date];
-    const dateTotal=rows.reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
-    html+=`<div class="date-group-title">
-      <span>📅 ${date}</span>
-      <span>PKR ${formatPKR(dateTotal)}</span>
-    </div>`;
-    html+=`<div class="tbl-wrap"><table>
-      <thead><tr><th>Code</th><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead>
-      <tbody>${rows.map(e=>`<tr>
-        <td>${e.code}</td>
-        <td>${e.desc}</td>
-        <td>${e.qty}</td>
-        <td>${formatPKR(e.rate)}</td>
-        <td style="font-weight:700;color:var(--teal)">${formatPKR(e.amount)}</td>
-      </tr>`).join('')}</tbody>
-    </table></div>`;
-  });
-
-  html+=`<div class="grand-total">
-    <div class="lbl">GRAND TOTAL</div>
-    <div class="val">PKR ${formatPKR(grand)}</div>
-  </div>`;
-
+  let html=`<div class="report-header"><h2>FGi — CONTRACTOR REPORT</h2><p>Contractor: <b>${name}</b></p><p>${month?'Month: '+month+' | ':''}${year?'Year: '+year:''}</p></div>`;
+  Object.keys(byDate).sort().forEach(date=>{const rows=byDate[date];const dateTotal=rows.reduce((s,e)=>s+(parseFloat(e.amount)||0),0);html+=`<div class="date-group-title"><span>📅 ${date}</span><span>PKR ${formatPKR(dateTotal)}</span></div><div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead><tbody>${rows.map(e=>`<tr><td>${e.code}</td><td>${e.desc}</td><td>${e.qty}</td><td>${formatPKR(e.rate)}</td><td style="font-weight:700;color:var(--teal)">${formatPKR(e.amount)}</td></tr>`).join('')}</tbody></table></div>`;});
+  html+=`<div class="grand-total"><div class="lbl">GRAND TOTAL</div><div class="val">PKR ${formatPKR(grand)}</div></div>`;
   body.innerHTML=html;
 }
 
 // ============================================================
-//  DOWNLOAD REPORT AS IMAGE
+//  DOWNLOAD REPORTS — Folder Picker
 // ============================================================
 async function downloadReport(type){
-  showToast('📸 Preparing image...');
+  showToast('📸 Preparing...');
+  let target,filename;
+  if(type==='itemRates'){target=document.getElementById('rpt_itemRates');filename='FGI_Item_Rate_List';}
+  else{target=document.getElementById('contractorReportBody');const name=document.getElementById('rptContractorSelect').value||'Contractor';filename='FGI_Report_'+name.replace(/\s+/g,'_');}
+  if(!target){showToast('No data');return;}
+  await drawAndSave(target,filename);
+}
+async function downloadItemReport(){showToast('📸 Preparing...');await drawAndSave(document.getElementById('itemsTable'),'FGI_Item_Rate_List');}
 
-  let target;
-  let filename;
-
-  if(type==='itemRates'){
-    target=document.getElementById('rpt_itemRates');
-    filename='FGI_Item_Rate_List';
-  } else {
-    target=document.getElementById('contractorReportBody');
-    const name=document.getElementById('rptContractorSelect').value||'Contractor';
-    filename='FGI_Report_'+name.replace(/\s+/g,'_');
-  }
-
-  if(!target){ showToast('No data to download'); return; }
-
-  // Use html2canvas via CDN approach — we'll draw manually
-  drawReportToCanvas(target, filename);
+async function drawAndSave(element,filename){
+  if(typeof html2canvas==='undefined'){const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';document.head.appendChild(s);await new Promise(res=>s.onload=res);}
+  const clone=element.cloneNode(true);clone.style.cssText='position:fixed;top:-9999px;background:white;width:800px;padding:24px;';document.body.appendChild(clone);
+  try{
+    const cvs=await html2canvas(clone,{backgroundColor:'#ffffff',scale:2,useCORS:true});
+    document.body.removeChild(clone);
+    const fname=filename+'_'+getDateStr()+'.png';
+    cvs.toBlob(blob=>openFolderPicker('📸 Image Save?','Kahan save karein?',blob,fname),'image/png',1.0);
+  }catch(e){document.body.removeChild(clone);showToast('⚠️ Failed: '+e.message);}
 }
 
-async function downloadItemReport(){
-  showToast('📸 Preparing image...');
-  const target=document.getElementById('itemsTable');
-  drawReportToCanvas(target, 'FGI_Item_Rate_List');
-}
-
-function drawReportToCanvas(element, filename){
-  // Simple canvas drawing
-  const canvas=document.getElementById('reportCanvas');
-
-  // We use a clone approach
-  const clone=element.cloneNode(true);
-  clone.style.position='fixed';
-  clone.style.top='-9999px';
-  clone.style.background='white';
-  clone.style.width='800px';
-  clone.style.padding='24px';
-  document.body.appendChild(clone);
-
-  // Use html2canvas
-  const script=document.createElement('script');
-  script.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-  script.onload=()=>{
-    html2canvas(clone,{
-      backgroundColor:'#ffffff',
-      scale:2,
-      useCORS:true,
-      allowTaint:true
-    }).then(cvs=>{
-      document.body.removeChild(clone);
-      const link=document.createElement('a');
-      link.download=filename+'_'+getDateStr()+'.png';
-      link.href=cvs.toDataURL('image/png');
-      link.click();
-      showToast('✅ Image downloaded!');
-    }).catch(e=>{
-      document.body.removeChild(clone);
-      showToast('⚠️ Download failed, try again');
-    });
-  };
-  document.head.appendChild(script);
-}
-
-function getDateStr(){
-  const d=new Date();
-  return String(d.getDate()).padStart(2,'0')+String(d.getMonth()+1).padStart(2,'0')+d.getFullYear();
-}
+function getDateStr(){const d=new Date();return String(d.getDate()).padStart(2,'0')+String(d.getMonth()+1).padStart(2,'0')+d.getFullYear();}
 
 // ============================================================
 //  CALCULATOR
 // ============================================================
-let calcExpr='', calcResult='0', calcJustEvaled=false;
-
+let calcExpr='',calcResult='0',calcJustEvaled=false;
 function calcKey(k){
-  if(k==='C'){ calcExpr=''; calcResult='0'; calcJustEvaled=false; }
-  else if(k==='⌫'){
-    if(calcJustEvaled){ calcExpr=''; calcResult='0'; calcJustEvaled=false; }
-    else calcExpr=calcExpr.slice(0,-1);
-  }
-  else if(k==='='){
-    if(!calcExpr) return;
-    try{
-      const expr=calcExpr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');
-      const result=Function('"use strict"; return ('+expr+')')();
-      const r=Math.round(result*100000)/100000;
-      saveCalcHistory(calcExpr+' = '+r, r);
-      calcExpr=String(r);
-      calcResult=String(r);
-      calcJustEvaled=true;
-    } catch{ calcResult='Error'; }
-  }
-  else{
-    if(calcJustEvaled){
-      const ops=['+','-','×','÷','%'];
-      if(!ops.includes(k)) calcExpr='';
-      calcJustEvaled=false;
-    }
-    calcExpr+=k;
-    try{
-      const expr=calcExpr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');
-      const r=Function('"use strict"; return ('+expr+')')();
-      calcResult=String(Math.round(r*100000)/100000);
-    } catch{ calcResult=calcExpr; }
-  }
-  document.getElementById('calcExpr').textContent=calcExpr;
-  document.getElementById('calcResult').textContent=calcResult;
+  if(k==='C'){calcExpr='';calcResult='0';calcJustEvaled=false;}
+  else if(k==='⌫'){if(calcJustEvaled){calcExpr='';calcResult='0';calcJustEvaled=false;}else calcExpr=calcExpr.slice(0,-1);}
+  else if(k==='='){if(!calcExpr)return;try{const expr=calcExpr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');const result=Function('"use strict"; return ('+expr+')')();const r=Math.round(result*100000)/100000;saveCalcHistory(calcExpr+' = '+r,r);calcExpr=String(r);calcResult=String(r);calcJustEvaled=true;}catch{calcResult='Error';}}
+  else{if(calcJustEvaled){const ops=['+','-','×','÷','%'];if(!ops.includes(k))calcExpr='';calcJustEvaled=false;}calcExpr+=k;try{const expr=calcExpr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');const r=Function('"use strict"; return ('+expr+')')();calcResult=String(Math.round(r*100000)/100000);}catch{calcResult=calcExpr;}}
+  document.getElementById('calcExpr').textContent=calcExpr;document.getElementById('calcResult').textContent=calcResult;
 }
-
-function saveCalcHistory(label, val){
-  const h=DB.calcHistory();
-  h.push({ id:Date.now(), label, val });
-  if(h.length>50) h.shift();
-  DB.saveCalc(h);
-  renderCalcHistory();
-}
-
-function renderCalcHistory(){
-  const h=DB.calcHistory().slice().reverse();
-  const el=document.getElementById('histList');
-  if(!h.length){ el.innerHTML='<div class="empty"><div class="empty-icon">🔢</div>No calculations yet</div>'; return; }
-  el.innerHTML=h.map(item=>`<div class="hist-item">
-    <label style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer;text-transform:none;color:var(--text);letter-spacing:0;font-size:13px">
-      <input type="checkbox" class="hist-cb" data-val="${item.val}">
-      ${item.label}
-    </label>
-    <span style="color:var(--teal);font-weight:700;font-size:14px">${item.val}</span>
-  </div>`).join('');
-  document.getElementById('histSum').style.display='none';
-}
-
-function sumSelected(){
-  const cbs=document.querySelectorAll('.hist-cb:checked');
-  if(!cbs.length){ showToast('Select calculations first'); return; }
-  const sum=Array.from(cbs).reduce((s,cb)=>s+parseFloat(cb.dataset.val||0),0);
-  const el=document.getElementById('histSum');
-  el.style.display='block';
-  el.textContent='Σ Selected Sum = PKR '+formatPKR(sum);
-}
-
-function selectAllHist(){
-  document.querySelectorAll('.hist-cb').forEach(cb=>cb.checked=true);
-}
-
-function clearHist(){
-  if(!confirm('Clear history?')) return;
-  DB.saveCalc([]);
-  renderCalcHistory();
-}
+function saveCalcHistory(label,val){const h=DB.calcHistory();h.push({id:Date.now(),label,val});if(h.length>50)h.shift();DB.saveCalc(h);renderCalcHistory();}
+function renderCalcHistory(){const h=DB.calcHistory().slice().reverse();const el=document.getElementById('histList');if(!h.length){el.innerHTML='<div class="empty"><div class="empty-icon">🔢</div>No calculations yet</div>';return;}el.innerHTML=h.map(item=>`<div class="hist-item"><label style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer;text-transform:none;color:var(--text);letter-spacing:0;font-size:13px"><input type="checkbox" class="hist-cb" data-val="${item.val}">${item.label}</label><span style="color:var(--teal);font-weight:700;font-size:14px">${item.val}</span></div>`).join('');document.getElementById('histSum').style.display='none';}
+function sumSelected(){const cbs=document.querySelectorAll('.hist-cb:checked');if(!cbs.length){showToast('Select calculations first');return;}const sum=Array.from(cbs).reduce((s,cb)=>s+parseFloat(cb.dataset.val||0),0);const el=document.getElementById('histSum');el.style.display='block';el.textContent='Σ Selected Sum = PKR '+formatPKR(sum);}
+function selectAllHist(){document.querySelectorAll('.hist-cb').forEach(cb=>cb.checked=true);}
+function clearHist(){if(!confirm('Clear history?'))return;DB.saveCalc([]);renderCalcHistory();}
 
 // ============================================================
 //  IMPORT / EXPORT
 // ============================================================
-function showImportExport(){ document.getElementById('ieModal').style.display='flex'; }
-
+function showImportExport(){document.getElementById('ieModal').style.display='flex';}
 function exportData(){
-  const data={
-    contractItems: DB.contractItems(),
-    contractorEntries: DB.contractorEntries(),
-    categories: DB.categories(),
-    calcHistory: DB.calcHistory(),
-    exportedAt: new Date().toISOString()
-  };
+  const data={contractItems:DB.contractItems(),contractorEntries:DB.contractorEntries(),categories:DB.categories(),calcHistory:DB.calcHistory(),exportedAt:new Date().toISOString()};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const link=document.createElement('a');
-  link.href=URL.createObjectURL(blob);
-  link.download='FGI_Contractor_Backup_'+getDateStr()+'.json';
-  link.click();
-  showToast('✅ Data exported!');
+  openFolderPicker('💾 Backup Save?','JSON backup file',blob,'FGI_Contractor_Backup_'+getDateStr()+'.json');
 }
-
 function importData(e){
-  const file=e.target.files[0];
-  if(!file) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    try{
-      const data=JSON.parse(ev.target.result);
-      if(data.contractItems) DB.saveItems([...DB.contractItems(),...data.contractItems]);
-      if(data.contractorEntries) DB.saveEntries([...DB.contractorEntries(),...data.contractorEntries]);
-      if(data.categories){
-        const merged=[...new Set([...DB.categories(),...data.categories])];
-        DB.saveCats(merged);
-      }
-      closeModal('ieModal');
-      showToast('✅ Data imported!');
-      initApp();
-    } catch{ showToast('❌ Invalid file'); }
-  };
+  const file=e.target.files[0];if(!file)return;const reader=new FileReader();
+  reader.onload=ev=>{try{const data=JSON.parse(ev.target.result);if(data.contractItems)DB.saveItems([...DB.contractItems(),...data.contractItems]);if(data.contractorEntries)DB.saveEntries([...DB.contractorEntries(),...data.contractorEntries]);if(data.categories){const merged=[...new Set([...DB.categories(),...data.categories])];DB.saveCats(merged);}closeModal('ieModal');showToast('✅ Data imported!');initApp();}catch{showToast('❌ Invalid file');}};
   reader.readAsText(file);
 }
 
 // ============================================================
 //  SETTINGS
 // ============================================================
-function showSettings(){ document.getElementById('settingsModal').style.display='flex'; }
-
-function changePin(){
-  const p=document.getElementById('newPin').value;
-  const c=document.getElementById('newPinConfirm').value;
-  if(p.length!==4||!/^\d{4}$/.test(p)){ showToast('PIN must be 4 digits'); return; }
-  if(p!==c){ showToast('PINs do not match'); return; }
-  DB.setPin(p);
-  closeModal('settingsModal');
-  showToast('✅ PIN updated');
-}
-
-function clearAllData(){
-  if(!confirm('DELETE ALL DATA? This cannot be undone!')) return;
-  ['items','entries','cats','calc'].forEach(k=>localStorage.removeItem('fgi_'+k));
-  closeModal('settingsModal');
-  showToast('🗑 All data cleared');
-  initApp();
-}
-
-// ============================================================
-//  MODAL HELPERS
-// ============================================================
-function closeModal(id){ document.getElementById(id).style.display='none'; }
+function showSettings(){document.getElementById('settingsModal').style.display='flex';updateSQStatus();}
+function clearAllData(){if(!confirm('DELETE ALL DATA?'))return;['items','entries','cats','calc'].forEach(k=>localStorage.removeItem('fgi_'+k));closeModal('settingsModal');showToast('🗑 All data cleared');initApp();}
+function closeModal(id){document.getElementById(id).style.display='none';}
 
 // ============================================================
 //  TOAST
 // ============================================================
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
 // ============================================================
 //  DATE PICKER
 // ============================================================
-let dpTarget='', dpYear=2026, dpMonth=4, dpDay=2; // 0-indexed month
-
-const MONTHS=['January','February','March','April','May','June',
-               'July','August','September','October','November','December'];
-
-function openDatePicker(target){
-  dpTarget=target;
-  // parse current value if set
-  const cur=document.getElementById(target+'_date').value;
-  if(cur && validateDate(cur)){
-    const parts=cur.split('/');
-    dpDay=parseInt(parts[0]);
-    dpMonth=parseInt(parts[1])-1;
-    dpYear=2000+parseInt(parts[2]);
-  }
-  renderDpCells();
-  document.getElementById('datePickerOverlay').style.display='flex';
-}
-
-function closeDatePicker(){
-  document.getElementById('datePickerOverlay').style.display='none';
-}
-
-function closeDatePickerOutside(e){
-  if(e.target===document.getElementById('datePickerOverlay')) closeDatePicker();
-}
-
-function dpChangeMonth(dir){
-  dpMonth+=dir;
-  if(dpMonth<0){ dpMonth=11; dpYear--; }
-  if(dpMonth>11){ dpMonth=0; dpYear++; }
-  renderDpCells();
-}
-
-function renderDpCells(){
-  document.getElementById('dpMonthLabel').textContent=MONTHS[dpMonth]+' '+dpYear;
-  const first=new Date(dpYear,dpMonth,1).getDay();
-  const total=new Date(dpYear,dpMonth+1,0).getDate();
-  const today=new Date();
-  const cells=document.getElementById('dpCells');
-  let html='';
-  for(let i=0;i<first;i++) html+=`<span class="dp-cell empty"></span>`;
-  for(let d=1;d<=total;d++){
-    const isToday=d===today.getDate()&&dpMonth===today.getMonth()&&dpYear===today.getFullYear();
-    const isSel=d===dpDay&&dpMonth===dpMonth;
-    html+=`<button class="dp-cell${isToday?' today':''}${isSel?' selected':''}" onclick="dpSelect(${d})">${d}</button>`;
-  }
-  cells.innerHTML=html;
-}
-
-function dpSelect(d){
-  dpDay=d;
-  renderDpCells();
-}
-
-function confirmDate(){
-  const dd=String(dpDay).padStart(2,'0');
-  const mm=String(dpMonth+1).padStart(2,'0');
-  const yy=String(dpYear).slice(-2);
-  const dateStr=`${dd}/${mm}/${yy}`;
-  document.getElementById(dpTarget+'_date').value=dateStr;
-  document.getElementById(dpTarget+'_dateDisplay').textContent=dateStr;
-  closeDatePicker();
-}
+let dpTarget='',dpYear=2026,dpMonth=4,dpDay=2;
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function openDatePicker(target){dpTarget=target;const cur=document.getElementById(target+'_date').value;if(cur&&validateDate(cur)){const parts=cur.split('/');dpDay=parseInt(parts[0]);dpMonth=parseInt(parts[1])-1;dpYear=2000+parseInt(parts[2]);}renderDpCells();document.getElementById('datePickerOverlay').style.display='flex';}
+function closeDatePicker(){document.getElementById('datePickerOverlay').style.display='none';}
+function closeDatePickerOutside(e){if(e.target===document.getElementById('datePickerOverlay'))closeDatePicker();}
+function dpChangeMonth(dir){dpMonth+=dir;if(dpMonth<0){dpMonth=11;dpYear--;}if(dpMonth>11){dpMonth=0;dpYear++;}renderDpCells();}
+function renderDpCells(){document.getElementById('dpMonthLabel').textContent=MONTHS[dpMonth]+' '+dpYear;const first=new Date(dpYear,dpMonth,1).getDay();const total=new Date(dpYear,dpMonth+1,0).getDate();const today=new Date();let html='';for(let i=0;i<first;i++)html+=`<span class="dp-cell empty"></span>`;for(let d=1;d<=total;d++){const isToday=d===today.getDate()&&dpMonth===today.getMonth()&&dpYear===today.getFullYear();const isSel=d===dpDay;html+=`<button class="dp-cell${isToday?' today':''}${isSel?' selected':''}" onclick="dpSelect(${d})">${d}</button>`;}document.getElementById('dpCells').innerHTML=html;}
+function dpSelect(d){dpDay=d;renderDpCells();}
+function confirmDate(){const dd=String(dpDay).padStart(2,'0');const mm=String(dpMonth+1).padStart(2,'0');const yy=String(dpYear).slice(-2);const dateStr=`${dd}/${mm}/${yy}`;document.getElementById(dpTarget+'_date').value=dateStr;document.getElementById(dpTarget+'_dateDisplay').textContent=dateStr;closeDatePicker();}
 
 // ============================================================
-//  ON LOAD
+//  OFFLINE BAR
 // ============================================================
-window.onload=function(){
-  // Skip password - direct entry
-  document.getElementById('lockScreen').style.display='none';
-  initApp();
-  return;
-  // Render cal history
+(function(){const bar=document.getElementById('offlineBar');function upd(){if(bar)bar.style.display=navigator.onLine?'none':'block';}window.addEventListener('online',upd);window.addEventListener('offline',upd);upd();})();
+
+// Service Worker
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+// ============================================================
+//  BOOT
+// ============================================================
+window.onload = async function(){
+  await openCIDB();
   renderCalcHistory();
   updateItemDataLists();
+  // PIN screen visible — waiting for user
 };
-</script>
-
-<!-- PWA Manifest embedded as real data -->
-<script>
-// Real manifest with embedded PNG icons (base64)
-const ICON512 = "data:image/png;base64,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";
-const ICON192 = "data:image/png;base64,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";
-
-// manifest.json is a separate file for GitHub Pages
-// For single-file mode, also inject blob manifest as fallback
-const manifest = {
-  name: "FGI Contractor System",
-  short_name: "FGI Contrac",
-  description: "FGI Contractor Management System",
-  start_url: "./index.html",
-  display: "standalone",
-  background_color: "#0d2b6b",
-  theme_color: "#0d2b6b",
-  orientation: "portrait",
-  icons: [
-    { src: ICON192, sizes: "192x192", type: "image/png", purpose: "any" },
-    { src: ICON512, sizes: "512x512", type: "image/png", purpose: "any maskable" }
-  ]
-};
-// Update existing manifest link with blob (overrides the static one)
-const mblob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-const murl = URL.createObjectURL(mblob);
-document.querySelector('link[rel="manifest"]').href = murl;
-
-// Apple touch icon
-const appleLink = document.createElement('link');
-appleLink.rel='apple-touch-icon';
-appleLink.href=ICON512;
-document.head.appendChild(appleLink);
-
-// Register real service worker for proper PWA install
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(reg => {
-    console.log('SW registered:', reg.scope);
-  }).catch(e => {
-    // Fallback: blob SW for single-file mode
-    const swCode = `const CACHE='fgi-v2';self.addEventListener('install',e=>{self.skipWaiting();});self.addEventListener('activate',e=>{self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});`;
-    const swBlob = new Blob([swCode],{type:'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
-  });
-}
 </script>
 </body>
 </html>
