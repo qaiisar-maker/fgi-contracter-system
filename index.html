@@ -555,8 +555,8 @@ function openCIDB(){
 const cidbSet=(k,v)=>new Promise(res=>{if(!cidb){res();return;}const tx=cidb.transaction(CIDB_ST,'readwrite');tx.objectStore(CIDB_ST).put(v,k);tx.oncomplete=()=>res();tx.onerror=()=>res();});
 const cidbGet=(k)=>new Promise(res=>{if(!cidb){res(null);return;}const tx=cidb.transaction(CIDB_ST,'readonly');const r=tx.objectStore(CIDB_ST).get(k);r.onsuccess=()=>res(r.result??null);r.onerror=()=>res(null);});
 
-async function getPIN(){const p=await cidbGet('pin');return p||DB.pin();}
-async function setPIN(p){await cidbSet('pin',p);DB.setPin(p);}
+async function getPIN(){const p=await cidbGet('pin');return p||'8007';}
+async function setPIN(p){await cidbSet('pin',p);}
 async function getSQ(){const r=await cidbGet('sq')||localStorage.getItem('fgic_sq');return r?JSON.parse(r):null;}
 async function setSQ(q,a){const d=JSON.stringify({q,a:a.toLowerCase().trim()});await cidbSet('sq',d);localStorage.setItem('fgic_sq',d);}
 
